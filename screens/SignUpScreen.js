@@ -1,61 +1,87 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
-import React from 'react'
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios'; // Ensure Axios is imported
 import { themeColors } from '../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {ArrowLeftIcon} from  "react-native-heroicons/solid";
-
+import { ArrowLeftIcon } from "react-native-heroicons/solid";
 
 export default function SignUpScreen() {
   const navigation = useNavigation();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignUp = async () => {
+    // The URL might change based on where your API is hosted
+    const url = 'https://api-hdzvzie4ya-uc.a.run.app/api/register/user';
+    try {
+      const response = await axios.post(url, {
+        name,
+        email,
+        password,
+      });
+      // If the signup is successful
+      Alert.alert("Signup Successful", "You're successfully registered!");
+      navigation.navigate('Login'); // Or wherever you wish to navigate upon success
+    } catch (error) {
+      Alert.alert("Signup Error", error.response ? error.response.data.message : "An unexpected error occurred");
+      console.log(error);
+    }
+  };
 
   return (
     <View className="flex-1 bg-white" style={{backgroundColor: themeColors.bgColor(1)}}>
-    <SafeAreaView className="flex">
-      <View className="flex-row justify-start">
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
-        >
+      <SafeAreaView className="flex">
+        <View className="flex-row justify-start">
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+          >
+            <ArrowLeftIcon size="20" color="black" />
+          </TouchableOpacity>
+        </View>
+        <View className="flex-row justify-center">
+          <Image
+            source={require('../assets/image/signup.png')}
+            style={{width: 165, height: 110}}
+          />
+        </View>
+      </SafeAreaView>
+      <View className="flex-1 bg-white px-8 pt-8" style={{borderTopLeftRadius: 50, borderTopRightRadius: 50}}>
+        <View className="form space-y-2">
+          <Text className="text-gray-700 ml-4">Full Name</Text>
+          <TextInput
+            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+            placeholder="Enter your full name"
+            onChangeText={setName}
+            value={name}
+            autoCapitalize="none"
+          />
+          <Text className="text-gray-700 ml-4">Email Address</Text>
+          <TextInput
+            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+            placeholder="Enter your email address"
+            onChangeText={setEmail}
+            value={email}
+            autoCapitalize="none"
+          />
+          <Text className="text-gray-700 ml-4">Password</Text>
+          <TextInput
+            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
+            placeholder="Enter your password"
+            secureTextEntry
+            onChangeText={setPassword}
+            value={password}
+            autoCapitalize="none"
+          />
+          <TouchableOpacity
+            className="py-3 bg-yellow-400 rounded-xl"
+            onPress={handleSignUp}
+          >
+            <Text className="font-xl font-bold text-center text-gray-700">Sign Up</Text>
 
-          <ArrowLeftIcon size="20" color="black" />
-        </TouchableOpacity>
-      </View>
-      <View className="flex-row justify-center">
-        <Image source={require('../assets/image/signup.png')}
-        style={{width: 165, height: 110}}/>
-      </View>
-    </SafeAreaView>
-      <View className="flex-1 bg-white px-8 pt-8"
-          style={{borderTopLeftRadius: 50, borderTopRightRadius: 50}}
-        >
-          <View className="form space-y-2">
-            <Text className="text-gray-700 ml-4">Full Name</Text>
-            <TextInput
-              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-              value=''
-              placeholder='Enter your Your Name'
-            />
-            <Text className="text-gray-700 ml-4">Email Adress</Text>
-            <TextInput
-              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-              value=''
-              placeholder='Enter your email address'
-            />
-            <Text className="text-gray-700 ml-4">Password</Text>
-            <TextInput
-              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
-              secureTextEntry
-              value=''
-              placeholder='Enter your password'
-              />
-              <TouchableOpacity
-                  className="py-3 bg-yellow-400 rounded-xl"
 
-                  >
-                <Text className="font-xl font-bold text-center text-gray-700">
-                Sign Up
-                </Text>
               </TouchableOpacity>
           </View>
           <Text className="text-xl text-gray-700 font-bold text-center py-5">
