@@ -1,3 +1,4 @@
+//React-native-taxi-app-user/screens/WelcomeScreen.js
 import React from 'react';
 import {View, Text, Image, TouchableOpacity} from  "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';

@@ -1,3 +1,4 @@
+///Users/mz/Desktop/react/React-Native-user-app/React-native-taxi-app-user/screens/HomeScreen.js
 import React from 'react';
 import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';

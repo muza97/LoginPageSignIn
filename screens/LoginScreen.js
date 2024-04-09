@@ -1,3 +1,4 @@
+//React-native-taxi-app-user/screens/LoginScreen.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';

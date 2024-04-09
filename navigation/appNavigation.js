@@ -1,3 +1,4 @@
+///Users/mz/Desktop/react/React-Native-user-app/React-native-taxi-app-user/navigation/appNavigation.js
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
