@@ -57,6 +57,6 @@ export default function HomeScreen() {
 const styles = {
   map: {
     width: Dimensions.get('window').width,
-    height: '70%', // Adjust the map height as needed
+    height: '100%', // Adjust the map height as needed
   },
 };
