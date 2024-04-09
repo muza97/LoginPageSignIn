@@ -26,11 +26,11 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 items-center justify-center" style={{ backgroundColor: themeColors.bgColor(1) }}>
       <MapView
-        provider={PROVIDER_GOOGLE} // Use Google Maps as the map provider
+        provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
-          latitude: 37.78825, // Example latitude
-          longitude: -122.4324, // Example longitude
+          latitude: 37.78825, 
+          longitude: -122.4324, 
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -44,7 +44,7 @@ export default function HomeScreen() {
         {routeCoordinates.length > 0 && (
           <Polyline
             coordinates={routeCoordinates}
-            strokeColor="#000" // black
+            strokeColor="#000" 
             strokeWidth={6}
           />
         )}
@@ -57,6 +57,6 @@ export default function HomeScreen() {
 const styles = {
   map: {
     width: Dimensions.get('window').width,
-    height: '50%', // Adjust the map height as needed
+    height: '70%', // Adjust the map height as needed
   },
 };

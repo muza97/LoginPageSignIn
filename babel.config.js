@@ -1,5 +1,5 @@
 module.exports = function(api) {
-  api.cache(false); // Note: Use false for no caching
+  api.cache(false); 
   return {
     presets: ['babel-preset-expo'],
     plugins: [
@@ -12,7 +12,7 @@ module.exports = function(api) {
         allowUndefined: true,
         verbose: false,
       }],
-      'nativewind/babel', // This ensures NativeWind support
+      'nativewind/babel', 
     ],
   };
 };
