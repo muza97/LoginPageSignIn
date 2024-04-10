@@ -13,6 +13,7 @@ module.exports = function(api) {
         verbose: false,
       }],
       'nativewind/babel', 
+      'react-native-reanimated/plugin',
     ],
   };
 };

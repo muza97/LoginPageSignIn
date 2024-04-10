@@ -25,7 +25,7 @@ export default function LoginScreen() {
       const data = await response.json();
       if (response.ok) {
         await AsyncStorage.setItem('userToken', data.token);
-        navigation.navigate('Home');
+        navigation.navigate('Main');
       } else {
         Alert.alert('Login Failed', data.message || 'Please check your credentials');
       }

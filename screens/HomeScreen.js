@@ -1,23 +1,17 @@
-///Users/mz/Desktop/react/React-Native-user-app/React-native-taxi-app-user/screens/HomeScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
-import useGeocoding from '../hooks/useGeocoding'; // Make sure this path is correct
-import { themeColors } from '../theme'; // Adjust the import path as needed
+import Icon from 'react-native-vector-icons/Ionicons'; // Ensure this package is installed
+import { useNavigation } from '@react-navigation/native';
+import useGeocoding from '../hooks/useGeocoding';
+import { themeColors } from '../theme';
 
 export default function HomeScreen() {
+  const navigation = useNavigation(); // Hook to get navigation prop
   const { geocodeAddress } = useGeocoding();
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const [startCoordinates, setStartCoordinates] = useState(null);
   const [destinationCoordinates, setDestinationCoordinates] = useState(null);
-
-  // Assume fetchDirections is a function similar to your DirectionService.js logic
-  // Adjust fetchDirections import path based on your project structure
-  // import { fetchDirections } from '../services/DirectionService';
-
-  const handleGetDirections = async () => {
-    // Logic to fetch directions and set route coordinates
-  };
 
   useEffect(() => {
     // Example: Geocode an initial address or set initial map region
@@ -27,7 +21,7 @@ export default function HomeScreen() {
     <View className="flex-1 items-center justify-center" style={{ backgroundColor: themeColors.bgColor(1) }}>
       <MapView
         provider={PROVIDER_GOOGLE}
-        style={styles.map}
+        className="w-full h-full"
         initialRegion={{
           latitude: 37.78825, 
           longitude: -122.4324, 
@@ -49,14 +43,9 @@ export default function HomeScreen() {
           />
         )}
       </MapView>
-      {/* Additional UI components here */}
+      <TouchableOpacity onPress={() => navigation.toggleDrawer()} className="absolute top-10 left-4 z-10">
+        <Icon name="menu" size={30} color="#000" />
+      </TouchableOpacity>
     </View>
   );
 }
-
-const styles = {
-  map: {
-    width: Dimensions.get('window').width,
-    height: '100%', // Adjust the map height as needed
-  },
-};
