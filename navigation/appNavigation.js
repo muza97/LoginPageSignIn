@@ -12,20 +12,24 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import TripsScreen from '../screens/TripsScreen';
 import ContactScreen from '../screens/ContactScreen';
-import { themeColors } from '../theme';
+import { themeColors } from '../theme'; // Ensure this is the correct path
+import CustomDrawerContent from '../components/CustomDrawerContent'; // Ensure this is the correct path
+
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigator() {
   return (
     <Drawer.Navigator  
-    screenOptions={{
-      headerShown: false,
-      drawerStyle: {
-      backgroundColor: themeColors.bgColor(1),
-      },
-    }}
-    initialRouteName="Home">
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: themeColors.bgColor(1), // Your drawer background color from theme
+        },
+      }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />} // Use custom drawer content
+      initialRouteName="Home"
+    >
       <Drawer.Screen name="Home" component={HomeScreen} />
       <Drawer.Screen name="Profile" component={ProfileScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
