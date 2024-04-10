@@ -51,9 +51,15 @@ export default function ContactScreen() {
             multiline
             numberOfLines={4}
           />
-          <TouchableOpacity className="mt-4 bg-blue-500 py-3 rounded-md shadow-md">
-            <Text className="text-white text-center text-lg font-semibold">Submit</Text>
-          </TouchableOpacity>
+        <TouchableOpacity className="mt-4 bg-blue-500 py-3 rounded-md shadow-md">
+          <Text className="text-white text-center text-lg font-semibold">Submit</Text>
+            </TouchableOpacity>
+            <Text className="pt-5">If it's urgent, contact us on this number: 070 000 00 00.</Text>
+            <Text className="pt-3 text-gray-600">
+              In case of a medical emergency or any situation that requires immediate police attention, please dial <Text className="font-bold">112</Text> directly to get in touch with emergency services.
+            </Text>
+            
+
         </View>
       )}
     </View>
