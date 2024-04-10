@@ -14,6 +14,7 @@ import TripsScreen from '../screens/TripsScreen';
 import ContactScreen from '../screens/ContactScreen';
 import { themeColors } from '../theme'; // Ensure this is the correct path
 import CustomDrawerContent from '../components/CustomDrawerContent'; // Ensure this is the correct path
+import PersonalDetailsScreen from '../screens/PersonalDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -48,6 +49,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginScreen} />
         <Stack.Screen name="SignUp" options={{ headerShown: false }} component={SignUpScreen} />
         <Stack.Screen name="Main" options={{ headerShown: false }} component={DrawerNavigator} />
+        <Stack.Screen name="PersonalDetails" options={{ headerShown: false }} component={PersonalDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
