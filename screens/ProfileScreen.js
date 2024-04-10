@@ -6,8 +6,14 @@ import { useNavigation } from '@react-navigation/native';
 export default function ProfileScreen() {
     const navigation = useNavigation();
   return (
-    <View className="bg-white flex-1 pt-6">
-      <View className="items-center pt-12 pb-8">
+    <View className="bg-white flex-1 ">
+      <TouchableOpacity
+                onPress={() => navigation.goBack()} 
+                className="pt-20 pl-5"
+            >
+                <Ionicons name="arrow-back" size={30} className="text-black" />
+            </TouchableOpacity>
+      <View className="items-center pt-1 pb-8 ">
         <Image
           source={require('../assets/image/on-comp-moon.png')} 
           className="w-24 h-24 rounded-full"

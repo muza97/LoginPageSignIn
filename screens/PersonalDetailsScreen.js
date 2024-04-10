@@ -7,12 +7,13 @@ import { useNavigation } from '@react-navigation/native';
 export default function PersonalDetailsScreen() {
   const navigation = useNavigation();
   return (
-    <View className="flex-1 bg-white py-20">
-      <View className="flex-row items-center p-4">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="mr-2">
-          <Ionicons name="arrow-back" size={24} className="text-black" />
-        </TouchableOpacity>
-        <Text className="text-xl font-semibold flex-1">Personuppgifter</Text>
+       <View className="bg-white flex-1">
+            {/* Header */}
+            <View className="flex-row items-center p-4">
+                <TouchableOpacity onPress={() => navigation.goBack()} className="pl-5 pt-6">
+                    <Ionicons name="arrow-back" size={30} className="text-black" />
+                </TouchableOpacity>
+                <Text className="text-xl font-semibold flex-1 pl-2 pt-6">Personuppgifter</Text>
       </View>
       <View className="items-center p-6">
         <Image
