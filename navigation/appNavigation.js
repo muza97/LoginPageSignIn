@@ -12,7 +12,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import TripsScreen from '../screens/TripsScreen';
 import ContactScreen from '../screens/ContactScreen';
-
+import { themeColors } from '../theme';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -20,7 +20,10 @@ function DrawerNavigator() {
   return (
     <Drawer.Navigator  
     screenOptions={{
-      headerShown: false, // Add this line to hide the header
+      headerShown: false,
+      drawerStyle: {
+      backgroundColor: themeColors.bgColor(1),
+      },
     }}
     initialRouteName="Home">
       <Drawer.Screen name="Home" component={HomeScreen} />
