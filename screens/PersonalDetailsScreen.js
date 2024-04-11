@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ActivityIndicator, TextInput,Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { fetchProfileImage } from '../components/CustomDrawerContent';
@@ -8,9 +8,11 @@ import * as ImagePicker from 'expo-image-picker'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Platform } from 'react-native';
+import { patchUserDetails } from '../components/userUpdate';
 
 export default function PersonalDetailsScreen() {
   const navigation = useNavigation();
+  const [updateInProgress, setUpdateInProgress] = useState(false);
   const [userDetails, setUserDetails] = useState({
     name: '',
     email: '',
@@ -42,6 +44,18 @@ export default function PersonalDetailsScreen() {
       ...prevDetails,
       [field]: value,
     }));
+  };
+
+  const updateName = async (newName) => {
+    setUpdateInProgress(true);
+    const updatedDetails = await patchUserDetails(newName, null, null);
+    if (updatedDetails) {
+      setUserDetails(updatedDetails);
+      Alert.alert('Success', 'Name updated successfully!');
+    } else {
+      Alert.alert('Error', 'Failed to update name.');
+    }
+    setUpdateInProgress(false);
   };
 
   //update image : 
@@ -157,16 +171,17 @@ export default function PersonalDetailsScreen() {
 
       <View className="px-4">
         {/* Name Input */}
-        <View className="flex-row items-center py-3 border-b border-gray-300">
+         <View className="flex-row items-center py-3 border-b border-gray-300">
           <Ionicons name="person-outline" size={24} className="text-gray-600" />
           <TextInput
             style={{ flex: 1, marginLeft: 3, height: 40 }}
-            onChangeText={(value) => handleUpdate(value, 'name')}
+            onChangeText={(value) => setUserDetails({ ...userDetails, name: value })}
             value={userDetails.name}
             placeholder="Name"
+            autoCapitalize="none"
           />
-          <TouchableOpacity>
-            <Text className="text-blue-500">change</Text>
+          <TouchableOpacity onPress={() => updateName(userDetails.name)}>
+            <Text className="text-blue-500">{updateInProgress ? 'Updating...' : 'Change'}</Text>
           </TouchableOpacity>
         </View>
 
