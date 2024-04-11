@@ -26,6 +26,11 @@ export default function LoginScreen() {
       if (response.ok) {
         try {
           await AsyncStorage.setItem('userToken', data.token);
+          await AsyncStorage.setItem('userName', data.userName || 'User'); 
+  
+          console.log('Logged in as:', data.userName || 'User');
+    
+  
           navigation.navigate('Main');
         } catch (asyncStorageError) {
           console.error('AsyncStorage error:', asyncStorageError);
@@ -39,6 +44,8 @@ export default function LoginScreen() {
       console.error('Login network error:', networkError);
     }
   };
+  
+  
   
   
 

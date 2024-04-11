@@ -12,8 +12,10 @@ const CustomDrawerContent = (props) => {
   const fetchProfileImage = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
+      console.log(token);
       if (!token) {
         console.log('No token found');
+              console.log(token);
         return;
       }
 
