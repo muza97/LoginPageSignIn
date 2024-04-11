@@ -14,7 +14,7 @@ export default function TripsScreen() {
     { id: '1', address: '348 Fillmore St, San Francisco, CA', time: '6:45 PM, Monday June 19', driver: 'Ying', price: '$20' },
     { id: '1', address: '348 Fillmore St, San Francisco, CA', time: '6:45 PM, Monday June 19', driver: 'Ying', price: '$20' },
 
-    // ... fler åkturer ...
+
   ];
 
   return (

@@ -26,7 +26,7 @@ export default function ProfileScreen() {
           onPress={() => navigation.navigate('PersonalDetails')}
         >
           <Ionicons name="person-outline" size={24} className="text-gray-600" />
-          <Text className="flex-1 ml-3 text-lg">Personal data</Text>
+          <Text className="flex-1 ml-3 text-lg">Personal data</Text> 
           <Ionicons name="chevron-forward" size={24} className="text-gray-600" />
         </TouchableOpacity>
         <TouchableOpacity className="flex-row items-center py-3 border-b border-gray-300">

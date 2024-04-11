@@ -21,19 +21,26 @@ export default function LoginScreen() {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
-        await AsyncStorage.setItem('userToken', data.token);
-        navigation.navigate('Main');
+        try {
+          await AsyncStorage.setItem('userToken', data.token);
+          navigation.navigate('Main');
+        } catch (asyncStorageError) {
+          console.error('AsyncStorage error:', asyncStorageError);
+          Alert.alert('Login Error', 'Failed to save login info');
+        }
       } else {
         Alert.alert('Login Failed', data.message || 'Please check your credentials');
       }
-    } catch (error) {
+    } catch (networkError) {
       Alert.alert('Login Error', 'Unable to connect to the server');
-      console.error('Login error:', error);
+      console.error('Login network error:', networkError);
     }
   };
+  
+  
 
   return (
     <View className="flex-1 bg-white" style={{backgroundColor: themeColors.bgColor(1)}}>
