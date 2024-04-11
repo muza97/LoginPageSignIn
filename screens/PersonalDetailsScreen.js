@@ -3,7 +3,11 @@ import { View, Text, TouchableOpacity, Image, ActivityIndicator, TextInput } fro
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { fetchProfileImage } from '../components/CustomDrawerContent';
-import { fetchUserDetails } from '../components/userUtils';  // Adjust the path as necessary
+import { fetchUserDetails } from '../components/userUtils';  
+import * as ImagePicker from 'expo-image-picker'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { Platform } from 'react-native';
 
 export default function PersonalDetailsScreen() {
   const navigation = useNavigation();
@@ -24,7 +28,7 @@ export default function PersonalDetailsScreen() {
       }
       setLoading(false);
 
-      const imageUrl = await fetchProfileImage(); // Use the imported function
+      const imageUrl = await fetchProfileImage(); 
       if (imageUrl) {
         setProfileImageUrl(imageUrl);
       }
@@ -39,6 +43,81 @@ export default function PersonalDetailsScreen() {
       [field]: value,
     }));
   };
+
+  //update image : 
+  const uploadProfilePicture = async (imageUri) => {
+    if (!imageUri) {
+      console.error('No image URI to upload');
+      return;
+    }
+  
+    const token = await AsyncStorage.getItem('userToken');
+    
+    const fileType = imageUri.match(/\.(jpg|jpeg|png)$/i); 
+    if (!fileType) {
+      console.error('Unable to determine the file type from URI');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('profilePicture', {
+      uri: Platform.OS === 'android' ? imageUri : imageUri.replace('file://', ''),
+      type: `image/${fileType[1]}`, 
+      name: `profile-picture.${fileType[1]}`, 
+    });
+  
+    try {
+      const response = await fetch('http://192.168.1.93:3000/user/update-image', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      const responseData = await response.json();
+  
+      if (!response.ok) {
+        console.error('Upload Error:', responseData);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      console.log('Upload Successful', responseData);
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+    }
+  };
+  
+  
+
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+  
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+  
+    console.log(pickerResult); 
+  
+    if (!pickerResult.cancelled && pickerResult.assets && pickerResult.assets.length > 0) {
+      const uri = pickerResult.assets[0].uri;
+      console.log('Uploading image with URI:', uri);
+      setProfileImageUrl(uri);
+      await uploadProfilePicture(uri);
+    } else {
+      console.error('No image selected or no URI found');
+    }
+  };
+  
+  
+
 
   if (loading) {
     return (
@@ -63,10 +142,13 @@ export default function PersonalDetailsScreen() {
           source={ profileImageUrl ? { uri: profileImageUrl } : require('../assets/image/on-comp-moon.png')}
           className="w-24 h-24 rounded-full"
         />
-        <TouchableOpacity className="absolute bottom-0 right-0 bg-green-500 rounded-full p-2">
+       <TouchableOpacity 
+          className="absolute bottom-0 right-0 bg-green-500 rounded-full p-2"
+          onPress={pickImage} 
+        >
           <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>
-        <Text className="text-sm p-2">Add a Profile picture so a driver can recognize you</Text>
+        <Text className="text-sm p-2">Change PFP</Text>
       </View>
 
       <View className="px-4">
