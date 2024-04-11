@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios'; // Ensure axios is installed and imported
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import axios from 'axios'; 
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { fetchProfileImage } from '../components/CustomDrawerContent';
 
@@ -33,17 +33,22 @@ export default function ProfileScreen() {
         }
     };
 
+    const getImage = useCallback(async () => {
+        const imageUrl = await fetchProfileImage(); // Use the imported function
+        if (imageUrl) {
+            setProfileImageUrl(imageUrl);
+        }
+    }, []);
+
     useEffect(() => {
-      fetchUsername();
-      // Fetch and set the profile image URL
-      const getImage = async () => {
-          const imageUrl = await fetchProfileImage(); // Use the imported function
-          if (imageUrl) {
-              setProfileImageUrl(imageUrl);
-          }
-      };
-      getImage();
-  }, []);
+        fetchUsername();
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            getImage();
+        }, [getImage])
+    );
 
     if (loading) {
         return (

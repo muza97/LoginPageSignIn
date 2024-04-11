@@ -76,7 +76,11 @@ export default function PersonalDetailsScreen() {
       });
   
       const responseData = await response.json();
-  
+      if (response.ok) {
+       // await AsyncStorage.setItem('profileImageUrl', imageUri);
+      //  setProfileImageUrl(imageUri);
+     //  navigation.navigate('Profile', { profileImageUrl: imageUri }); {/*navigera tillbaka lösning*/}
+      }
       if (!response.ok) {
         console.error('Upload Error:', responseData);
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -148,7 +152,7 @@ export default function PersonalDetailsScreen() {
         >
           <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>
-        <Text className="text-sm p-2">Change PFP</Text>
+        <Text className="text-sm p-2">Change Avatar</Text>
       </View>
 
       <View className="px-4">
