@@ -39,12 +39,19 @@ export default function PersonalDetailsScreen() {
   }, []);
 
 
-  const handleUpdate = (value, field) => {
-    setUserDetails(prevDetails => ({
-      ...prevDetails,
-      [field]: value,
-    }));
+  const handleUpdateDetails = async (field, newValue) => {
+    setUpdateInProgress(true);
+    const fieldsToUpdate = { ...userDetails, [field]: newValue };
+    const updatedDetails = await patchUserDetails(fieldsToUpdate.name, fieldsToUpdate.email, fieldsToUpdate.phoneNumber);
+    if (updatedDetails) {
+      setUserDetails(updatedDetails);
+      Alert.alert('Success', `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
+    } else {
+      Alert.alert('Error', `Failed to update ${field}.`);
+    }
+    setUpdateInProgress(false);
   };
+
 
   const updateName = async (newName) => {
     setUpdateInProgress(true);
@@ -186,31 +193,32 @@ export default function PersonalDetailsScreen() {
         </View>
 
         {/* Phone Number Input */}
-        <View className="flex-row items-center py-3 border-b border-gray-300">
-          <Ionicons name="call-outline" size={24} className="text-gray-600" />
-          <TextInput
-            style={{ flex: 1, marginLeft: 3, height: 40 }}
-            onChangeText={(value) => handleUpdate(value, 'phoneNumber')}
-            value={userDetails.phoneNumber}
-            placeholder="Phone Number"
-            keyboardType="phone-pad"
-          />
-          <TouchableOpacity>
-            <Text className="text-blue-500">change</Text>
-          </TouchableOpacity>
-        </View>
+<View className="flex-row items-center py-3 border-b border-gray-300">
+  <Ionicons name="call-outline" size={24} className="text-gray-600" />
+  <TextInput
+    style={{ flex: 1, marginLeft: 3, height: 40 }}
+    onChangeText={(value) => setUserDetails({ ...userDetails, phoneNumber: value })}
+    value={userDetails.phoneNumber}
+    placeholder="Phone Number"
+    keyboardType="phone-pad"
+  />
+  <TouchableOpacity onPress={() => handleUpdateDetails('phoneNumber', userDetails.phoneNumber)}>
+    <Text className="text-blue-500">{updateInProgress ? 'Updating...' : 'Change'}</Text>
+  </TouchableOpacity>
+</View>
 
         {/* Email Input */}
         <View className="flex-row items-center py-3">
           <Ionicons name="mail-outline" size={24} className="text-gray-600" />
           <TextInput
             style={{ flex: 1, marginLeft: 3, height: 40 }}
-            onChangeText={(value) => handleUpdate(value, 'email')}
+            onChangeText={(value) => setUserDetails({ ...userDetails, email: value })}
+
             value={userDetails.email}
             placeholder="Email"
             keyboardType="email-address"
           />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleUpdateDetails('email', userDetails.email)}>
             <Text className="text-blue-500">change</Text>
           </TouchableOpacity>
         </View>
