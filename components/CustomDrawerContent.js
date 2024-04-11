@@ -5,43 +5,49 @@ import LogoutButton from '../buttons/LogoutButton';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Define fetchProfileImage function
+export const fetchProfileImage = async () => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) {
+      console.log('No token found');
+      return null; // Return null if there is no token
+    }
+
+    const response = await fetch('http://localhost:3000/user/profile-image2', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        // Add any other headers as needed
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      return URL.createObjectURL(blob); // Return the image URL
+    } else {
+      console.log('Failed to fetch profile image. Status:', response.status);
+      return null; // Return null on failure
+    }
+  } catch (error) {
+    console.error('Error fetching profile image:', error);
+    return null; // Return null on error
+  }
+};
+
+// Define CustomDrawerContent component
 const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
   const [profileImageUrl, setProfileImageUrl] = useState('../assets/image/signup.png'); // Default path to your local image
 
-  const fetchProfileImage = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      console.log(token);
-      if (!token) {
-        console.log('No token found');
-              console.log(token);
-        return;
-      }
-
-      const response = await fetch('http://localhost:3000/user/profile-image2', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          // Add any other headers as needed
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const imageUri = URL.createObjectURL(blob);
-        setProfileImageUrl(imageUri);
-      } else {
-        console.log('Failed to fetch profile image. Status:', response.status);
-        // Handle HTTP errors here
-      }
-    } catch (error) {
-      console.error('Error fetching profile image:', error);
-    }
-  };
-
   useEffect(() => {
-    fetchProfileImage();
+    const getImage = async () => {
+      const imageUrl = await fetchProfileImage();
+      if (imageUrl) {
+        setProfileImageUrl(imageUrl);
+      }
+    };
+    getImage();
   }, []);
 
   const navigateToProfile = () => {
@@ -67,5 +73,6 @@ const CustomDrawerContent = (props) => {
     </DrawerContentScrollView>
   );
 };
+
 
 export default CustomDrawerContent;

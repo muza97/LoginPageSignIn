@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchProfileImage } from '../components/CustomDrawerContent';
 
 export default function PersonalDetailsScreen() {
   const navigation = useNavigation();
@@ -13,6 +14,7 @@ export default function PersonalDetailsScreen() {
     phoneNumber: '',
   });
   const [loading, setLoading] = useState(true);
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
 
   const fetchUserDetails = async () => {
     try {
@@ -43,7 +45,15 @@ export default function PersonalDetailsScreen() {
 
   useEffect(() => {
     fetchUserDetails();
-  }, []);
+    const getImage = async () => {
+      const imageUrl = await fetchProfileImage(); // Use the imported function
+      if (imageUrl) {
+          setProfileImageUrl(imageUrl);
+      }
+  };
+  getImage();
+}, []);
+
 
   const handleUpdate = (value, field) => {
     setUserDetails(prevDetails => ({
@@ -72,7 +82,7 @@ export default function PersonalDetailsScreen() {
 
       <View className="items-center p-6">
         <Image
-          source={require('../assets/image/on-comp-moon.png')}
+          source={ profileImageUrl ? { uri: profileImageUrl } : require('../assets/image/on-comp-moon.png')}
           className="w-24 h-24 rounded-full"
         />
         <TouchableOpacity className="absolute bottom-0 right-0 bg-green-500 rounded-full p-2">

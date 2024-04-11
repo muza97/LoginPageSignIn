@@ -3,12 +3,14 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios'; // Ensure axios is installed and imported
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import { fetchProfileImage } from '../components/CustomDrawerContent';
 
 export default function ProfileScreen() {
     const navigation = useNavigation();
     const [username, setUsername] = useState('');
     const [loading, setLoading] = useState(true);
+    const [profileImageUrl, setProfileImageUrl] = useState(null);
 
     const fetchUsername = async () => {
         try {
@@ -32,8 +34,16 @@ export default function ProfileScreen() {
     };
 
     useEffect(() => {
-        fetchUsername();
-    }, []);
+      fetchUsername();
+      // Fetch and set the profile image URL
+      const getImage = async () => {
+          const imageUrl = await fetchProfileImage(); // Use the imported function
+          if (imageUrl) {
+              setProfileImageUrl(imageUrl);
+          }
+      };
+      getImage();
+  }, []);
 
     if (loading) {
         return (
@@ -50,8 +60,8 @@ export default function ProfileScreen() {
             </TouchableOpacity>
             <View className="items-center pt-1 pb-8">
                 <Image
-                    source={require('../assets/image/on-comp-moon.png')}
-                    className="w-24 h-24 rounded-full"
+                    source={profileImageUrl ? { uri: profileImageUrl } : require('../assets/image/on-comp-moon.png')}
+                    style={{ width: 96, height: 96, borderRadius: 48 }} // Adjusted for a rounded image
                 />
                 <Text className="text-xl font-semibold mt-4">{username || 'User'}</Text>
             </View>
