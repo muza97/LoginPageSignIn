@@ -38,6 +38,8 @@ export default function PersonalDetailsScreen() {
     initializeDetails();
   }, []);
 
+  
+
 
   const handleUpdateDetails = async (field, newValue) => {
     setUpdateInProgress(true);
@@ -51,6 +53,8 @@ export default function PersonalDetailsScreen() {
     }
     setUpdateInProgress(false);
   };
+
+
 
 
   const updateName = async (newName) => {

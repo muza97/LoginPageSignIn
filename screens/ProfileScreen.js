@@ -40,13 +40,10 @@ export default function ProfileScreen() {
         }
     }, []);
 
-    useEffect(() => {
-        fetchUsername();
-    }, []);
-
     useFocusEffect(
         useCallback(() => {
-            getImage();
+            fetchUsername(); // Fetch username on focus
+            getImage();      // Fetch image on focus
         }, [getImage])
     );
 
