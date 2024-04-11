@@ -18,7 +18,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView className="bg-white flex-1 px-4 py-8">
+    <ScrollView className="bg-white flex-1 px-4 py-12">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
         <Ionicons name="arrow-back-outline" size={30} className="text-black" />
       </TouchableOpacity>

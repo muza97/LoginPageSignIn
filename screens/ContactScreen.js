@@ -3,11 +3,19 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { themeColors } from '../theme';
+import { useNavigation } from '@react-navigation/native';
+
 export default function ContactScreen() {
+  const navigation = useNavigation()
   const [showMap, setShowMap] = useState(false);
 
   return (
-    <View className="flex-1 bg-white px-4 py-32"style={{ backgroundColor: themeColors.bgColor(1) }}>
+    <View className="flex-1 bg-white px-4 py-20" 
+    //style={{ backgroundColor: themeColors.bgColor(1) }}
+    >
+    <TouchableOpacity onPress={() => navigation.openDrawer()} className="mb-6">
+        <Ionicons name="arrow-back-outline" size={30} className="text-black" />
+      </TouchableOpacity>
       <Text className="text-center text-2xl font-bold text-gray-800 mb-8">Let's get in touch.</Text>
 
       <View className="flex-row justify-center mb-8">
