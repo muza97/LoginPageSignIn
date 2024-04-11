@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Image, Text, TouchableOpacity } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import LogoutButton from '../buttons/LogoutButton';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchUserDetails } from './userUtils';
 
@@ -12,23 +12,22 @@ export const fetchProfileImage = async () => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
       console.log('No token found');
-      return null; // Return null if there is no token
+      return null; 
     }
 
     const response = await fetch('http://localhost:3000/user/profile-image2', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
-        // Add any other headers as needed
       },
     });
 
     if (response.ok) {
       const blob = await response.blob();
-      return URL.createObjectURL(blob); // Return the image URL
+      return URL.createObjectURL(blob); 
     } else {
       console.log('Failed to fetch profile image. Status:', response.status);
-      return null; // Return null on failure
+      return null; 
     }
   } catch (error) {
     console.error('Error fetching profile image:', error);
@@ -36,25 +35,32 @@ export const fetchProfileImage = async () => {
   }
 };
 
-// Define CustomDrawerContent component
 const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
   const [profileImageUrl, setProfileImageUrl] = useState('../assets/image/signup.png'); 
   const [userName, setUserName] = useState('');
 
-  useEffect(() => {
-    const initialize = async () => {
-      const userDetails = await fetchUserDetails();  // Fetch user details
-      if (userDetails && userDetails.name) {
-        setUserName(userDetails.name);  // Set user name if available
+  useFocusEffect(
+    useCallback(() => {
+      async function initialize() {
+        const userDetails = await fetchUserDetails();  
+        if (userDetails && userDetails.name) {
+          setUserName(userDetails.name);  
+        }
+        const imageUrl = await fetchProfileImage();  
+        if (imageUrl) {
+          setProfileImageUrl(imageUrl);
+        }
       }
-      const imageUrl = await fetchProfileImage();  // Fetch profile image
-      if (imageUrl) {
-        setProfileImageUrl(imageUrl);
-      }
-    };
-    initialize();
-  }, []);
+
+      initialize();
+
+      return () => {
+
+      };
+    }, [])
+  );
+
   const navigateToProfile = () => {
     navigation.navigate('Profile');
   };
@@ -78,6 +84,5 @@ const CustomDrawerContent = (props) => {
     </DrawerContentScrollView>
   );
 };
-
 
 export default CustomDrawerContent;
