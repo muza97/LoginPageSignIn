@@ -4,6 +4,7 @@ import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawe
 import LogoutButton from '../buttons/LogoutButton';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchUserDetails } from './userUtils';
 
 // Define fetchProfileImage function
 export const fetchProfileImage = async () => {
@@ -38,18 +39,22 @@ export const fetchProfileImage = async () => {
 // Define CustomDrawerContent component
 const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
-  const [profileImageUrl, setProfileImageUrl] = useState('../assets/image/signup.png'); // Default path to your local image
+  const [profileImageUrl, setProfileImageUrl] = useState('../assets/image/signup.png'); 
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    const getImage = async () => {
-      const imageUrl = await fetchProfileImage();
+    const initialize = async () => {
+      const userDetails = await fetchUserDetails();  // Fetch user details
+      if (userDetails && userDetails.name) {
+        setUserName(userDetails.name);  // Set user name if available
+      }
+      const imageUrl = await fetchProfileImage();  // Fetch profile image
       if (imageUrl) {
         setProfileImageUrl(imageUrl);
       }
     };
-    getImage();
+    initialize();
   }, []);
-
   const navigateToProfile = () => {
     navigation.navigate('Profile');
   };
@@ -62,7 +67,7 @@ const CustomDrawerContent = (props) => {
           className="w-20 h-20 rounded-full mb-4"
         />
         <TouchableOpacity onPress={navigateToProfile} className="mb-5">
-          <Text className="text-base font-medium">My Profile</Text>
+          <Text className="text-base font-medium">{userName ? `${userName}'s profil` : 'My Profile'}</Text>
         </TouchableOpacity>
         <View className="w-full border-b border-gray-200 mb-5" />
       </View>

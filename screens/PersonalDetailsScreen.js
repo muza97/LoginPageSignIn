@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, ActivityIndicator, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchProfileImage } from '../components/CustomDrawerContent';
+import { fetchUserDetails } from '../components/userUtils';  // Adjust the path as necessary
 
 export default function PersonalDetailsScreen() {
   const navigation = useNavigation();
@@ -16,43 +15,22 @@ export default function PersonalDetailsScreen() {
   const [loading, setLoading] = useState(true);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
 
-  const fetchUserDetails = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        console.log('No token found');
-        setLoading(false);
-        return;
-      }
-
-      const response = await axios.get('http://localhost:3000/user/details', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      setUserDetails({
-        name: response.data.username, // Assuming the response has 'username', adjust if necessary
-        email: response.data.email,
-        phoneNumber: response.data.phoneNumber,
-      });
-      setLoading(false);
-    } catch (error) {
-      console.error('There was an error fetching the user details:', error);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchUserDetails();
-    const getImage = async () => {
+    const initializeDetails = async () => {
+      setLoading(true);
+      const details = await fetchUserDetails();
+      if (details) {
+        setUserDetails(details);
+      }
+      setLoading(false);
+
       const imageUrl = await fetchProfileImage(); // Use the imported function
       if (imageUrl) {
-          setProfileImageUrl(imageUrl);
+        setProfileImageUrl(imageUrl);
       }
-  };
-  getImage();
-}, []);
+    };
+    initializeDetails();
+  }, []);
 
 
   const handleUpdate = (value, field) => {

@@ -26,9 +26,7 @@ export default function LoginScreen() {
       if (response.ok) {
         try {
           await AsyncStorage.setItem('userToken', data.token);
-          await AsyncStorage.setItem('userName', data.userName || 'User'); 
-  
-          console.log('Logged in as:', data.userName || 'User');
+         
     
   
           navigation.navigate('Main');
