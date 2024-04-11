@@ -7,7 +7,6 @@ export default function SettingsScreen() {
   const navigation = useNavigation();
 
   const handleDeleteAccount = () => {
-    // Visa en varning innan kontot tas bort
     Alert.alert(
       "Delete Account",
       "Are you sure you want to delete your account? This action cannot be undone.",
@@ -75,7 +74,7 @@ export default function SettingsScreen() {
       </Section>
 
       {/* Ta bort konto */}
-      <TouchableOpacity onPress={handleDeleteAccount} className="mt-6 mb-4 p-4 border border-red-500 rounded-md">
+      <TouchableOpacity onPress={handleDeleteAccount} className="mt-6 mb-9 p-4 border border-red-500 rounded-md">
         <Text className="text-red-500 text-center">Delete Account</Text>
       </TouchableOpacity>
     </ScrollView>

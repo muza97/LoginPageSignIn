@@ -2,21 +2,21 @@
 import React from 'react';
 import {View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import LogoutButton from '../buttons/LogoutButton'; // Adjust the import path as needed
+import LogoutButton from '../buttons/LogoutButton'; 
 import { useNavigation } from '@react-navigation/native';
 
 const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
 
   const navigateToProfile = () => {
-    navigation.navigate('Profile'); // Make sure 'Profile' is the name of your profile screen route
+    navigation.navigate('Profile'); 
   };
 
   return (
     <DrawerContentScrollView {...props} className="flex-1 bg-white">
       <View className="items-center p-5">
         <Image
-          source={require('../assets/image/signup.png')} // Replace with your image URI
+          source={require('../assets/image/signup.png')} 
           className="w-20 h-20 rounded-full mb-4"
         />
         <TouchableOpacity onPress={navigateToProfile} className="mb-5">

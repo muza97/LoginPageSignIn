@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import { themeColors } from '../theme';
 export default function ContactScreen() {
   const [showMap, setShowMap] = useState(false);
 
   return (
-    <View className="flex-1 bg-white px-4 py-32">
+    <View className="flex-1 bg-white px-4 py-32"style={{ backgroundColor: themeColors.bgColor(1) }}>
       <Text className="text-center text-2xl font-bold text-gray-800 mb-8">Let's get in touch.</Text>
 
       <View className="flex-row justify-center mb-8">
@@ -18,17 +18,17 @@ export default function ContactScreen() {
           <Ionicons name="map-outline" size={30} color={showMap ? "blue" : "grey"} />
         </TouchableOpacity>
       </View>
-
+    
       {showMap ? (
         <MapView
           className="h-64"
           initialRegion={{
-            latitude: 28.6139,
-            longitude: 77.2090,
+            latitude: 59.41035454920276,
+            longitude: 17.92565873812647,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}>
-          <Marker coordinate={{ latitude: 28.6139, longitude: 77.2090 }} />
+          <Marker coordinate={{ latitude: 59.41035454920276, longitude: 17.92565873812647 }} />
         </MapView>
       ) : (
         <View className="flex-1">
