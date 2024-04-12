@@ -79,39 +79,7 @@ export default function HomeScreen() {
   };
 
 
-  const fetchSimulatedDrivers = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        Alert.alert('Error', 'Authentication token not found.');
-        return;
-      }
-      
-      const response = await axios.post('http://localhost:3000/user/simulate-nearby-drivers', {
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-  
-      if (response.data && response.data.drivers) {
-        setNearbyDrivers(response.data.drivers);
-      } else {
-        Alert.alert('Error', 'Failed to fetch simulated drivers.');
-      }
-    } catch (error) {
-      console.error('Error fetching simulated drivers:', error);
-      Alert.alert('Error', 'Failed to fetch simulated drivers.');
-    }
-  };
-  useEffect(() => {
-    if (userLocation) {
-      fetchSimulatedDrivers();
-    }
-  }, [userLocation]);
+
   
 
   return (
