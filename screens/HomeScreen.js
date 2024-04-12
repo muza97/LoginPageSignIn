@@ -12,6 +12,7 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState(null);
   const [isLocationArrowPressed, setIsLocationArrowPressed] = useState(false);
+  const [nearbyDrivers, setNearbyDrivers] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -23,6 +24,14 @@ export default function HomeScreen() {
       getCurrentLocation();
     })();
   }, []);
+  const zoomOut = () => {
+    setUserLocation(prevRegion => ({
+      ...prevRegion,
+      latitudeDelta: prevRegion.latitudeDelta * 2, // Increase the deltas to zoom out
+      longitudeDelta: prevRegion.longitudeDelta * 2,
+    }));
+  };
+  
 
   const getCurrentLocation = async () => {
     try {
@@ -69,6 +78,42 @@ export default function HomeScreen() {
     }
   };
 
+
+  const fetchSimulatedDrivers = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        Alert.alert('Error', 'Authentication token not found.');
+        return;
+      }
+      
+      const response = await axios.post('http://localhost:3000/user/simulate-nearby-drivers', {
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (response.data && response.data.drivers) {
+        setNearbyDrivers(response.data.drivers);
+      } else {
+        Alert.alert('Error', 'Failed to fetch simulated drivers.');
+      }
+    } catch (error) {
+      console.error('Error fetching simulated drivers:', error);
+      Alert.alert('Error', 'Failed to fetch simulated drivers.');
+    }
+  };
+  useEffect(() => {
+    if (userLocation) {
+      fetchSimulatedDrivers();
+    }
+  }, [userLocation]);
+  
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: themeColors.bgColor(1) }}>
       <MapView
@@ -81,9 +126,16 @@ export default function HomeScreen() {
           longitudeDelta: 0.0421,
         }}
         region={userLocation}
-      >
-        {userLocation && <Marker coordinate={userLocation} />}
-      </MapView>
+      > 
+       {userLocation && <Marker coordinate={userLocation} />}
+  {nearbyDrivers.map((driver, index) => (
+    <Marker
+      key={index}
+      coordinate={{ latitude: driver.latitude, longitude: driver.longitude }}
+      // Add any additional Marker styling or custom components
+    />
+  ))}  
+      </MapView> 
       <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ position: 'absolute', top: 40, left: 16 }}>
         <FontAwesome name="bars" size={30} color="black" />
       </TouchableOpacity>
@@ -94,6 +146,11 @@ export default function HomeScreen() {
         }}
         style={{ position: 'absolute', top: 40, right: 16 }}>
         <FontAwesome name="location-arrow" size={30} color={isLocationArrowPressed ? "red" : "black"} />
+      </TouchableOpacity> 
+      <TouchableOpacity
+        onPress={zoomOut}
+        style={{ position: 'absolute', bottom: 40, right: 16 }}>
+        <FontAwesome name="search-minus" size={30} color="black" />
       </TouchableOpacity>
     </View>
   );
