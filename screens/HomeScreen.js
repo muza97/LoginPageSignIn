@@ -1,45 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Platform, PermissionsAndroid } from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
+import { View, TouchableOpacity, Text, Alert } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
-import useGeocoding from '../hooks/useGeocoding';
-import { themeColors } from '../theme';
+import axios from 'axios';
 import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { themeColors } from '../theme';
 
 export default function HomeScreen() {
-  const navigation = useNavigation(); 
-  const { geocodeAddress } = useGeocoding();
+  const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState(null);
   const [isLocationArrowPressed, setIsLocationArrowPressed] = useState(false);
-  const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const [startCoordinates, setStartCoordinates] = useState(null);
-  const [destinationCoordinates, setDestinationCoordinates] = useState(null);
-
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        console.log('Permission to access location was denied');
+        console.error('Permission to access location was denied');
         return;
       }
-
       getCurrentLocation();
     })();
   }, []);
 
-const getCurrentLocation = async () => {
-    let location = await Location.getCurrentPositionAsync({});
-    const { latitude, longitude } = location.coords;
-    setUserLocation({
-      latitude,
-      longitude,
-      latitudeDelta: 0.005,
-      longitudeDelta: 0.005,
-    });
+  const getCurrentLocation = async () => {
+    try {
+      let location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setUserLocation({
+        latitude,
+        longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+      postLocation(latitude, longitude);  // Call the post function after location is updated
+    } catch (error) {
+      console.error('Error getting location:', error);
+    }
   };
 
+  const postLocation = async (latitude, longitude) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        Alert.alert('Error', 'Authentication token not found.');
+        return;
+      }
+
+      const response = await axios.post('http://localhost:3000/user/update-location', {
+        latitude,
+        longitude
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'Location posted successfully.');
+      } else {
+        Alert.alert('Error', 'Failed to post location');
+      }
+    } catch (error) {
+      console.error('Error posting location:', error);
+      Alert.alert('Error', 'Failed to post location');
+    }
+  };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: themeColors.bgColor(1) }}>
@@ -52,9 +80,9 @@ const getCurrentLocation = async () => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-        region={userLocation} // re-center the map to userLocation 
+        region={userLocation}
       >
-        {/* Marker and Polyline as before */}
+        {userLocation && <Marker coordinate={userLocation} />}
       </MapView>
       <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ position: 'absolute', top: 40, left: 16 }}>
         <FontAwesome name="bars" size={30} color="black" />
