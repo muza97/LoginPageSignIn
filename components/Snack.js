@@ -1,13 +1,14 @@
 import React from 'react';
-import { View } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 
-const Snack = ({ visible, onDismiss, message }) => {
+const Snack = ({ visible, onDismiss, message, backgroundColor = '#6200EE', textColor = '#FFFFFF' }) => {
   return (
     <Snackbar
       visible={visible}
       onDismiss={onDismiss}
-      duration={3000} 
+      duration={2000}
+      style={{ backgroundColor: backgroundColor }} 
+      theme={{ colors: { surface: textColor } }}  
     >
       {message}
     </Snackbar>

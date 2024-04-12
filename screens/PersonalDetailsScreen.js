@@ -9,9 +9,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Platform } from 'react-native';
 import { patchUserDetails } from '../components/userUpdate';
+import Snack from '../components/Snack';
 
 export default function PersonalDetailsScreen() {
   const navigation = useNavigation();
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [updateInProgress, setUpdateInProgress] = useState(false);
   const [userDetails, setUserDetails] = useState({
     name: '',
@@ -47,10 +50,12 @@ export default function PersonalDetailsScreen() {
     const updatedDetails = await patchUserDetails(fieldsToUpdate.name, fieldsToUpdate.email, fieldsToUpdate.phoneNumber);
     if (updatedDetails) {
       setUserDetails(updatedDetails);
-      Alert.alert('Success', `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
+      setSnackbarMessage(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
     } else {
-      Alert.alert('Error', `Failed to update ${field}.`);
+      setSnackbarMessage(`Failed to update ${field}.`);
     }
+    setSnackbarVisible(true);
+    
     setUpdateInProgress(false);
   };
 
@@ -62,10 +67,12 @@ export default function PersonalDetailsScreen() {
     const updatedDetails = await patchUserDetails(newName, null, null);
     if (updatedDetails) {
       setUserDetails(updatedDetails);
-      Alert.alert('Success', 'Name updated successfully!');
+      setSnackbarMessage('Name updated successfully!');
     } else {
-      Alert.alert('Error', 'Failed to update name.');
+      setSnackbarMessage('Failed to update name.');
     }
+    setSnackbarVisible(true);
+    
     setUpdateInProgress(false);
   };
 
@@ -108,7 +115,12 @@ export default function PersonalDetailsScreen() {
       }
       if (!response.ok) {
         console.error('Upload Error:', responseData);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        setSnackbarMessage(`Upload Error: ${responseData.error}`);
+        setSnackbarVisible(true);
+      } else {
+        console.log('Upload Successful', responseData);
+        setSnackbarMessage('Profile picture updated successfully!');
+        setSnackbarVisible(true);
       }
   
       console.log('Upload Successful', responseData);
@@ -225,8 +237,14 @@ export default function PersonalDetailsScreen() {
           <TouchableOpacity onPress={() => handleUpdateDetails('email', userDetails.email)}>
             <Text className="text-blue-500">change</Text>
           </TouchableOpacity>
+          
         </View>
       </View>
+      <Snack
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        message={snackbarMessage}
+      />
     </View>
   );
 }
