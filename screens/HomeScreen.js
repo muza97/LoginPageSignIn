@@ -22,6 +22,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       let isActive = true;  
+      const url= "http:///user/update-location"
 
       const fetchLocationAndImage = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -141,11 +142,10 @@ export default function HomeScreen() {
         style={{ position: 'absolute', top: 40, right: 16 }}>
         <FontAwesome name="location-arrow" size={30} color={isLocationArrowPressed ? "red" : "black"} />
       </TouchableOpacity> 
-      <TouchableOpacity
-        onPress={() => setUserLocation(null)}
-        style={{ position: 'absolute', bottom: 40, right: 16 }}>
-        <FontAwesome name="search-minus" size={30} color="black" />
-      </TouchableOpacity>
+      <TouchableOpacity onPress={zoomOut} style={{ position: 'absolute', bottom: 40, right: 40 }}>
+    <FontAwesome name="search-minus" size={30} color="black" />
+</TouchableOpacity>
+
       <Snack
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
