@@ -16,6 +16,7 @@ import { themeColors } from '../theme'; // Ensure this is the correct path
 import CustomDrawerContent from '../components/CustomDrawerContent'; // Ensure this is the correct path
 import PersonalDetailsScreen from '../screens/PersonalDetailsScreen';
 import LoginAndSecurityScreen from '../screens/additionalScreens/LoginAndSecurityScreen';
+import PaymentMethodScreen from '../screens/additionalScreens/PaymentMethodScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -52,6 +53,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Main" options={{ headerShown: false }} component={DrawerNavigator} />
         <Stack.Screen name="PersonalDetails" options={{ headerShown: false }} component={PersonalDetailsScreen} />
         <Stack.Screen name="LoginAndSecurity" options={{ headerShown: false }} component={LoginAndSecurityScreen} />
+        <Stack.Screen name="Payment" options={{ headerShown: false }} component={PaymentMethodScreen} />
+
 
       </Stack.Navigator>
     </NavigationContainer>
