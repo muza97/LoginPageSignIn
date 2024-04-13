@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+//screens/HomeScreen.js
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, TouchableOpacity, Platform, PermissionsAndroid, Text, Button} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons'; 
@@ -7,6 +8,7 @@ import useGeocoding from '../hooks/useGeocoding';
 import { themeColors } from '../theme';
 import * as Location from 'expo-location';
 import BottomSheetComponent from '../components/BottomSheetComponent'; 
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 export default function HomeScreen() {
@@ -18,17 +20,28 @@ export default function HomeScreen() {
   const [startCoordinates, setStartCoordinates] = useState(null);
   const [destinationCoordinates, setDestinationCoordinates] = useState(null);
   const bottomSheetRef = useRef(null);
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(true);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  const handleFocus = useCallback(() => {
+    const targetIndex = isBottomSheetOpen ? 0 : 1;  // Use isBottomSheetOpen to toggle
+    bottomSheetRef.current?.snapToIndex(targetIndex);
+    setIsBottomSheetOpen(!isBottomSheetOpen);  // Toggle the state
+  }, [isBottomSheetOpen]);
 
 
-  const toggleBottomSheet = () => {
-    if (isBottomSheetOpen) {
-      bottomSheetRef.current?.close();  // Close to minimum snap point instead of completely closing
-    } else {
-      bottomSheetRef.current?.expand();  // Expand to the next snap point or fully open
-    }
-    setIsBottomSheetOpen(!isBottomSheetOpen);
-  };
+  const handleRequestRide = useCallback(() => {
+    console.log('Ride requested');
+    // Implement ride request logic here
+  }, []);
+
+  // const toggleBottomSheet = () => {
+  //   if (isBottomSheetOpen) {
+  //     bottomSheetRef.current?.close(0);  // Close to minimum snap point instead of completely closing
+  //   } else {
+  //     bottomSheetRef.current?.expand(2);  // Expand to the next snap point or fully open
+  //   }
+  //   setIsBottomSheetOpen(!isBottomSheetOpen);
+  // };
 
   useEffect(() => {
     (async () => {
@@ -69,7 +82,10 @@ const getCurrentLocation = async () => {
       >
         {/* Marker and Polyline as before */}
       </MapView>
-      <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={{ position: 'absolute', top: 40, left: 16 }}>
+      <TouchableOpacity 
+        onPress={() => navigation.toggleDrawer()} 
+        className="absolute top-10 left-4" // Tailwind CSS classes for positioning
+      >
         <FontAwesome name="bars" size={30} color="black" />
       </TouchableOpacity>
       <TouchableOpacity
@@ -77,12 +93,32 @@ const getCurrentLocation = async () => {
           setIsLocationArrowPressed(!isLocationArrowPressed);
           getCurrentLocation(); 
         }}
-        style={{ position: 'absolute', top: 40, right: 16 }}>
+        className="absolute top-10 right-4" 
+      >
         <FontAwesome name="location-arrow" size={30} color={isLocationArrowPressed ? "red" : "black"} />
       </TouchableOpacity>
-      <Button title="Toggle Bottom Sheet" onPress={toggleBottomSheet} />
+      <TouchableOpacity 
+        onPress={handleFocus} 
+        className="absolute top-12 self-center"
+      >
+        <MaterialIcons name="travel-explore" size={30} color="black" />
+      </TouchableOpacity>
+      <BottomSheetComponent
+        ref={bottomSheetRef}
+        onFocus={handleFocus}
+      />
+      {/* <BottomSheetComponent
+        ref={bottomSheetRef}
+        onFocus={handleFocus}
+        onRequestRide={handleRequestRide}
+      />
+      <TouchableOpacity 
+        onPress={() => handleFocus('pickUp')}  
+        className="absolute top-12 self-center"
+      >
+        <MaterialIcons name="travel-explore" size={30} color="black" />
+      </TouchableOpacity>
       <BottomSheetComponent ref={bottomSheetRef} />
-      {isBottomSheetOpen ? <Text>Bottom Sheet is Open</Text> : <Text>Bottom Sheet is Closed to 10%</Text>}
-      </View>
-  );
-}
+      {isBottomSheetOpen ? <Text>Bottom Sheet is Open</Text> : <Text>Bottom Sheet is Closed to 10%</Text>} */}
+    </View>
+  );}
