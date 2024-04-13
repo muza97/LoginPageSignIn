@@ -14,7 +14,8 @@ const BottomSheetComponent = forwardRef(({ onAddressChange, onRequestRide }, ref
   const fetchPlaces = async (text, setLocationPredictions) => {
     if (text.length > 0) {
       try {
-        const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${GEOCODING_API_KEY}&input=${text}&language=en`;
+        // Add the components parameter to restrict results to Sweden
+        const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${GEOCODING_API_KEY}&input=${text}&language=en&components=country:SE`;
         const result = await fetch(apiUrl);
         const json = await result.json();
         setLocationPredictions(json.predictions);
@@ -25,7 +26,7 @@ const BottomSheetComponent = forwardRef(({ onAddressChange, onRequestRide }, ref
       setLocationPredictions([]);
     }
   };
-
+  
   const additionalStyles = StyleSheet.create({
     input: {
       // If you want to remove the underline on Android, add this property
