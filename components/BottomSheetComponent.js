@@ -1,13 +1,12 @@
 import React, { forwardRef, useMemo, useState } from 'react';
 import { View, TextInput, Button, FlatList, TouchableOpacity, Text } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { GEOCODING_API_KEY } from '@env';
+import { GEOCODING_API_KEY } from '@env'; // Ensure this is set up in your .env file
 
-const BottomSheetComponent = forwardRef(({ onFocus, onRequestRide }, ref) => {
+const BottomSheetComponent = forwardRef(({ onAddressChange, onRequestRide }, ref) => {
   const snapPoints = useMemo(() => ['25%', '70%'], []);
   const [pickupPredictions, setPickupPredictions] = useState([]);
   const [dropoffPredictions, setDropoffPredictions] = useState([]);
-
   const [pickUpValue, setPickUpValue] = useState('');
   const [dropOffValue, setDropOffValue] = useState('');
 
@@ -38,26 +37,25 @@ const BottomSheetComponent = forwardRef(({ onFocus, onRequestRide }, ref) => {
             setPickUpValue(text);
             fetchPlaces(text, setPickupPredictions);
           }}
-          onFocus={() => onFocus('pickUp')}
+          underlineColorAndroid='transparent' 
         />
-        {pickupPredictions.length > 0 && (
-          <FlatList
-            data={pickupPredictions}
-            keyExtractor={(item) => item.place_id}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setPickUpValue(item.description);
-                  setPickupPredictions([]);
-                }}
-                className="bg-white p-2"
-              >
-                <Text className="text-lg">{item.description}</Text>
-              </TouchableOpacity>
-            )}
-            className="absolute top-14 left-0 right-0 bg-white max-h-40 border border-gray-300 z-10"
-          />
-        )}
+        <FlatList
+          data={pickupPredictions}
+          keyExtractor={(item) => item.place_id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                onAddressChange('pickUp', item.description);
+                setPickupPredictions([]);
+                setPickUpValue(item.description); // Ensure the input is updated with the selected address
+              }}
+              className="bg-white p-2"
+            >
+              <Text className="text-lg">{item.description}</Text>
+            </TouchableOpacity>
+          )}
+          className="absolute top-14 left-0 right-0 bg-white max-h-40 border border-gray-300 z-10"
+        />
         <TextInput
           placeholder="Drop off"
           className="h-12 w-full mb-4 bg-white border border-gray-300 px-4"
@@ -66,26 +64,26 @@ const BottomSheetComponent = forwardRef(({ onFocus, onRequestRide }, ref) => {
             setDropOffValue(text);
             fetchPlaces(text, setDropoffPredictions);
           }}
-          onFocus={() => onFocus('dropOff')}
+          underlineColorAndroid='transparent' 
+
         />
-        {dropoffPredictions.length > 0 && (
-          <FlatList
-            data={dropoffPredictions}
-            keyExtractor={(item) => item.place_id}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setDropOffValue(item.description);
-                  setDropoffPredictions([]);
-                }}
-                className="bg-white p-2"
-              >
-                <Text className="text-lg">{item.description}</Text>
-              </TouchableOpacity>
-            )}
-            className="absolute top-28 left-0 right-0 bg-white max-h-40 border border-gray-300 z-10"
-          />
-        )}
+        <FlatList
+          data={dropoffPredictions}
+          keyExtractor={(item) => item.place_id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                onAddressChange('dropOff', item.description);
+                setDropoffPredictions([]);
+                setDropOffValue(item.description); // Ensure the input is updated with the selected address
+              }}
+              className="bg-white p-2"
+            >
+              <Text className="text-lg">{item.description}</Text>
+            </TouchableOpacity>
+          )}
+          className="absolute top-28 left-0 right-0 bg-white max-h-40 border border-gray-300 z-10"
+        />
         <Button title="Request Ride" onPress={onRequestRide} className="w-full bg-blue-500 text-white p-4 rounded-md" />
       </View>
     </BottomSheet>

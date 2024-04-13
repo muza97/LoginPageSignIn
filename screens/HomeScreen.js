@@ -17,6 +17,8 @@ export default function HomeScreen() {
   const [rideRequested, setRideRequested] = useState(false); // State to track if ride is requested
   const bottomSheetRef = useRef(null);
   const [showSummaryBox, setShowSummaryBox] = useState(false);
+  const [pickupAddress, setPickupAddress] = useState(''); // Add state for pickup address
+  const [dropoffAddress, setDropoffAddress] = useState(''); // Add state for dropoff address
 
 
   const handleFocus = useCallback(() => {
@@ -25,9 +27,11 @@ export default function HomeScreen() {
   }, [isBottomSheetOpen]);
 
   const handleRequestRide = useCallback(() => {
-    setShowSummaryBox(true); // Show the summary box
-    // Optionally, close the bottom sheet if it should be hidden
-    bottomSheetRef.current?.snapToIndex(0); // Close bottom sheet
+    // Update the ride request status and show the summary box
+    setRideRequested(true);
+    setShowSummaryBox(true);
+    // If you need to close the bottom sheet, you can do it here
+    bottomSheetRef.current?.snapToIndex(0);
   }, []);
 
   useEffect(() => {
@@ -87,22 +91,31 @@ export default function HomeScreen() {
         <MaterialIcons name="travel-explore" size={30} color="black" />
       </TouchableOpacity>
       <BottomSheetComponent
-        ref={bottomSheetRef}
-        onFocus={handleFocus}
-        onRequestRide={handleRequestRide}
-      />
-      {showSummaryBox && (
-  <RideSummaryBox
-    pickupAddress="123 PickUp St."
-    dropoffAddress="456 DropOff Ave."
-    distance="2.5 miles"
-    rate="5"
-    onRequestConfirm={() => {
-      console.log('Ride confirmed');
-      setShowSummaryBox(false); // Hide the summary box
+    ref={bottomSheetRef}
+    // Make sure to pass a function that updates the state for pickup and dropoff addresses
+    onAddressChange={(field, value) => {
+      if (field === 'pickUp') {
+        setPickupAddress(value);
+      } else if (field === 'dropOff') {
+        setDropoffAddress(value);
+      }
     }}
+    onRequestRide={handleRequestRide}
   />
-)}
+
+  {showSummaryBox && (
+    <RideSummaryBox
+      pickupAddress={pickupAddress}
+      dropoffAddress={dropoffAddress}
+      distance="2.5 miles"
+      rate="5"
+      onRequestConfirm={() => {
+        console.log('Ride confirmed');
+        setShowSummaryBox(false);
+      }}
+    />
+  )}
+
     </View>
   );
 }
