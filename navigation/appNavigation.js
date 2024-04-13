@@ -17,6 +17,7 @@ import CustomDrawerContent from '../components/CustomDrawerContent'; // Ensure t
 import PersonalDetailsScreen from '../screens/PersonalDetailsScreen';
 import LoginAndSecurityScreen from '../screens/additionalScreens/LoginAndSecurityScreen';
 import PaymentMethodScreen from '../screens/additionalScreens/PaymentMethodScreen';
+import HomeAddressScreen from '../screens/additionalScreens/HomeAddressScreen';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -54,8 +55,9 @@ export default function AppNavigator() {
         <Stack.Screen name="PersonalDetails" options={{ headerShown: false }} component={PersonalDetailsScreen} />
         <Stack.Screen name="LoginAndSecurity" options={{ headerShown: false }} component={LoginAndSecurityScreen} />
         <Stack.Screen name="Payment" options={{ headerShown: false }} component={PaymentMethodScreen} />
+        <Stack.Screen name="HomeAddress" options={{ headerShown: false }} component={HomeAddressScreen} />
 
-
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -38,9 +38,12 @@ export default function ProfileScreen() {
           <Text className="flex-1 ml-3 text-lg">Loggin and security</Text>
           <Ionicons name="chevron-forward" size={24} className="text-gray-600" />
         </TouchableOpacity>
-        <TouchableOpacity className="flex-row items-center py-3 border-b border-gray-300">
-          <Ionicons name="lock-closed-outline" size={24} className="text-gray-600" />
-          <Text className="flex-1 ml-3 text-lg">Home adress</Text>
+        <TouchableOpacity
+          className="flex-row items-center py-3 border-b border-gray-300"
+          onPress={() => navigation.navigate('HomeAddress')} 
+        >
+          <Ionicons name="home-outline" size={24} className="text-gray-600" />
+          <Text className="flex-1 ml-3 text-lg">Home Address</Text>
           <Ionicons name="chevron-forward" size={24} className="text-gray-600" />
         </TouchableOpacity>
         <TouchableOpacity className="flex-row items-center py-3 border-b border-gray-300">
