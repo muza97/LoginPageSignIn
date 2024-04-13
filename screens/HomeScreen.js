@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Text, Alert,Image } from 'react-native';
+import { View, TouchableOpacity, Text, Alert,Image ,Modal} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -9,7 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { themeColors } from '../theme';
 import { fetchProfileImage as fetchProfileImageFromDrawer  } from '../components/CustomDrawerContent';
 import Snack from '../components/Snack';
-
+import WhereToButton from '../components/Button';
+import RideRequestScreen from './RideRequestScreen';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -18,6 +19,8 @@ export default function HomeScreen() {
   const [profileImageUrl, setProfileImageUrl] = useState(null); 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [rideRequestVisible, setRideRequestVisible] = useState(false);
+
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   useFocusEffect(
@@ -144,14 +147,37 @@ export default function HomeScreen() {
         <FontAwesome name="location-arrow" size={30} color={isLocationArrowPressed ? "red" : "black"} />
       </TouchableOpacity> 
       <TouchableOpacity onPress={zoomOut} style={{ position: 'absolute', bottom: 40, right: 40 }}>
-    <FontAwesome name="search-minus" size={30} color="black" />
-</TouchableOpacity>
-
+        <FontAwesome name="search-minus" size={30} color="black" />
+      </TouchableOpacity>
+  
       <Snack
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         message={snackbarMessage}
       />
+  
+  <WhereToButton onPress={() => setRideRequestVisible(true)} />
+  
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={rideRequestVisible}
+        onRequestClose={() => setRideRequestVisible(false)}
+      >
+        {/* Full-screen touchable area to allow dismissing the modal */}
+        <TouchableOpacity
+          style={{ flex: 1, justifyContent: 'flex-end' }}
+          activeOpacity={1}
+          onPress={() => setRideRequestVisible(false)}
+        >
+          {/* Transparent View */}
+          <View style={{ flex: 1, backgroundColor: 'transparent' }} />
+          {/* Container for the RideRequestScreen */}
+          <View className="w-full h-1/2 bg-white rounded-t-xl p-4 shadow-lg">
+            <RideRequestScreen />
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
-}
+      }  
