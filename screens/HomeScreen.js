@@ -24,6 +24,7 @@ export default function HomeScreen() {
   const [dropoffAddress, setDropoffAddress] = useState(''); // Add state for dropoff address
   const { geocodeAddress, startCoordinates, destinationCoordinates, error } = useGeocoding();
   const [route, setRoute] = useState(null);
+  const mapRef = useRef(null);
 
   const getDirections = async (startLoc, destinationLoc) => {
     try {
@@ -89,14 +90,27 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
+    // Whenever both start and destination coordinates are set, adjust the map view
     if (startCoordinates && destinationCoordinates) {
       getDirections(startCoordinates, destinationCoordinates);
     }
   }, [startCoordinates, destinationCoordinates]);
 
+  useEffect(() => {
+    // Whenever the route is updated, fit the map to the polyline
+    if (route && mapRef.current) {
+      mapRef.current.fitToCoordinates(route, {
+        edgePadding: { top: 100, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
+    }
+  }, [route]);
+
+
   return (
     <View className="flex-1 justify-center items-center bg-[color:themeColors.bgColor(1)]">
       <MapView
+      ref={mapRef}
         provider={PROVIDER_GOOGLE}
         className="absolute top-0 left-0 right-0 bottom-0"
         initialRegion={userLocation || {
