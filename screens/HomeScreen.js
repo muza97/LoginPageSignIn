@@ -1,6 +1,4 @@
 //screens/HomeScreen.js
-
-//screens/HomeScreen.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
