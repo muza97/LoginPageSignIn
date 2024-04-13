@@ -8,6 +8,8 @@ import { fetchUserDetails } from './userUtils';
 
 // Define fetchProfileImage function
 export const fetchProfileImage = async () => {
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+  console.log(apiUrl);
   try {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
@@ -15,7 +17,7 @@ export const fetchProfileImage = async () => {
       return null; 
     }
 
-    const response = await fetch('http://localhost:3000/user/profile-image2', {
+    const response = await fetch(apiUrl+'/user/profile-image2', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

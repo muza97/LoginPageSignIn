@@ -11,6 +11,7 @@ export default function ProfileScreen() {
     const [username, setUsername] = useState('');
     const [loading, setLoading] = useState(true);
     const [profileImageUrl, setProfileImageUrl] = useState(null);
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
     const fetchUsername = async () => {
         try {
@@ -20,7 +21,7 @@ export default function ProfileScreen() {
                 setLoading(false);
                 return;
             }
-            const response = await axios.get('http://localhost:3000/user/details', {
+            const response = await axios.get(apiUrl+'/user/details', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

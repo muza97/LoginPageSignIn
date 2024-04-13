@@ -2,6 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const patchUserDetails = async (name, email, phoneNumber) => {
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   try {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
@@ -14,7 +15,7 @@ export const patchUserDetails = async (name, email, phoneNumber) => {
     if (email) dataToUpdate.email = email;
     if (phoneNumber) dataToUpdate.phoneNumber = phoneNumber;
 
-    const response = await axios.patch('http://localhost:3000/user/patch', dataToUpdate, {
+    const response = await axios.patch(apiUrl+'/user/patch', dataToUpdate, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },

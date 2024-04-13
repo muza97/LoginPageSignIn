@@ -18,11 +18,12 @@ export default function HomeScreen() {
   const [profileImageUrl, setProfileImageUrl] = useState(null); 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   useFocusEffect(
     useCallback(() => {
       let isActive = true;  
-      const url= "http:///user/update-location"
+
 
       const fetchLocationAndImage = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -84,7 +85,7 @@ export default function HomeScreen() {
         return;
       }
 
-      const response = await axios.post('http://localhost:3000/user/update-location', {
+      const response = await axios.post(apiUrl+'/user/update-location', {
         latitude,
         longitude
       }, {

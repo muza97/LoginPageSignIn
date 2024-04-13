@@ -2,6 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const fetchUserDetails = async () => {
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   try {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
@@ -9,7 +10,7 @@ export const fetchUserDetails = async () => {
       return null;
     }
 
-    const response = await axios.get('http://localhost:3000/user/details', {
+    const response = await axios.get(apiUrl+'/user/details', {
       headers: {
         'Authorization': `Bearer ${token}`,
       },

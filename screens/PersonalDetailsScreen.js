@@ -23,6 +23,7 @@ export default function PersonalDetailsScreen() {
   });
   const [loading, setLoading] = useState(true);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
   useEffect(() => {
     const initializeDetails = async () => {
@@ -99,7 +100,7 @@ export default function PersonalDetailsScreen() {
     });
   
     try {
-      const response = await fetch('http://192.168.1.93:3000/user/update-image', {
+      const response = await fetch(apiUrl+'/user/update-image', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
