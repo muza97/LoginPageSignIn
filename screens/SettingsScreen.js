@@ -5,6 +5,17 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
+  const SettingItem = ({ label, iconName, hasSwitch, onPress }) => (
+    <TouchableOpacity
+      className="flex-row items-center justify-between py-3 border-b border-gray-200"
+      onPress={onPress} 
+    >
+      <Ionicons name={iconName} size={24} className="text-gray-600" />
+      <Text className="flex-1 ml-3 text-lg">{label}</Text>
+      {hasSwitch && <Switch />}
+      {!hasSwitch && <Ionicons name="chevron-forward-outline" size={24} className="text-gray-600" />}
+    </TouchableOpacity>
+  );
 
   const handleDeleteAccount = () => {
     Alert.alert(
@@ -63,8 +74,8 @@ export default function SettingsScreen() {
 
       {/* Support och hjälp */}
       <Section title="Support och hjälp">
-        <SettingItem label="Kundsupport" iconName="help-circle-outline" />
-        <SettingItem label="Feedback" iconName="thumbs-up-outline" />
+        <SettingItem label="Kundsupport" iconName="help-circle-outline" onPress={() => navigation.navigate('Contact')}/>
+        <SettingItem label="Feedback" iconName="thumbs-up-outline"  />
       </Section>
 
       {/* Juridiska och sekretess */}

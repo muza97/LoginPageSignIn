@@ -52,7 +52,9 @@ export default function PersonalDetailsScreen() {
             <Text className="text-blue-500">change</Text>
           </TouchableOpacity>
         </View>
+        
       </View>
+      <Text className="mt-5 p-5"> To change password, go to settings.</Text>
 
     </View>
   );

@@ -11,7 +11,7 @@ const BottomSheetComponent = forwardRef(({ onFocus, onRequestRide }, ref) => {
   return (
     <BottomSheet
       ref={ref}
-      index={0} // Start minimized
+      index={0}
       snapPoints={snapPoints}
       enablePanDownToClose={false}
     >
