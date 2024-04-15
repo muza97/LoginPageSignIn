@@ -100,7 +100,7 @@ export default function PersonalDetailsScreen() {
     });
   
     try {
-      const response = await fetch(apiUrl+'/user/update-image', {
+      const response = await fetch(apiUrl+ '/user/update-image', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

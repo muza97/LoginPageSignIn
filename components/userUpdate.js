@@ -16,7 +16,7 @@ export const patchUserDetails = async (name, email, phoneNumber) => {
     if (email) dataToUpdate.email = email;
     if (phoneNumber) dataToUpdate.phoneNumber = phoneNumber;
 
-    const response = await axios.patch(apiUrl + '/user/patch', dataToUpdate, {
+    const response = await axios.patch(apiUrl +  '/user/patch', dataToUpdate, {
       headers: {
         'Authorization': `Bearer ${token}`, // Corrected template literal syntax
       },

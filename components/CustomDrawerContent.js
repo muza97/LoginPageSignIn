@@ -18,7 +18,7 @@ export const fetchProfileImage = async () => {
       return null; 
     }
 
-    const response = await fetch(apiUrl+'/user/profile-image2', {
+    const response = await fetch(apiUrl+ '/user/profile-image2', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

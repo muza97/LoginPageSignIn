@@ -22,7 +22,7 @@ export default function ProfileScreen() {
                 setLoading(false);
                 return;
             }
-            const response = await axios.get(apiUrl+'/user/details', {
+            const response = await axios.get(apiUrl+ '/user/details', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

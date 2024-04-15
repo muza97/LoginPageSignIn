@@ -11,7 +11,7 @@ export const fetchUserDetails = async () => {
       return null;
     }
 
-    const response = await axios.get(apiUrl + '/user/details', {
+    const response = await axios.get(apiUrl +  '/user/details', {
       headers: {
         'Authorization': `Bearer ${token}`, // Corrected template literal syntax
       },
