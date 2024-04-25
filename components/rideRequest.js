@@ -1,10 +1,7 @@
 // rideRequest.js
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const requestRide = async (pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude) => {
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL; 
-
   try {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
@@ -19,21 +16,33 @@ export const requestRide = async (pickupLatitude, pickupLongitude, dropoffLatitu
       dropoff_longitude: dropoffLongitude,
     };
 
-    const response = await axios.post(apiUrl + '/user/request-ride', rideData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (response.status === 201) {
-      console.log('Ride requested successfully', response.data);
-      return response.data;
+    // Mock response based on some condition, for example, random success/failure
+    if (Math.random() > 0.5) { // 50% chance of success
+      console.log('Ride requested successfully', rideData);
+      // Simulate successful response data
+      return {
+        status: 201,
+        data: {
+          message: 'Ride has been arranged',
+          rideDetails: rideData,
+        },
+      };
     } else {
       console.log('Failed to request ride');
-      return null;
+      // Simulate failure scenario
+      return {
+        status: 400,
+        error: 'Failed to request ride due to server error',
+      };
     }
   } catch (error) {
     console.error('There was an error requesting the ride:', error);
-    return null;
+    return {
+      status: 500,
+      error: 'Internal error occurred',
+    };
   }
 };
