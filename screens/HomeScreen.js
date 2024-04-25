@@ -56,7 +56,7 @@ const [duration, setDuration] = useState(0);
   
   const calculateFare = (distance, duration) => {
     const baseFare = 2.50; // Base fare in dollars
-    const perKm = 1.25; // Cost per kilometer
+    const perKm = 10; // Cost per kilometer
     const perMinute = 0.20; // Cost per minute
   
     const distanceInKm = distance / 1000; // Convert meters to kilometers
@@ -252,7 +252,7 @@ const [duration, setDuration] = useState(0);
         dropoffAddress={dropoffAddress}
         distance={`${(distance / 1000).toFixed(2)} km`}
         duration={`${(duration / 60).toFixed(2)} minutes`}
-        rate={`kr${calculateFare(distance, duration)}`}
+        rate={`${calculateFare(distance, duration)}`}
         onRequestConfirm={() => {
           console.log('Ride confirmed');
           setShowSummaryBox(false);

@@ -12,10 +12,10 @@ const RideSummaryBox = ({ pickupAddress, dropoffAddress, distance, rate, onReque
       <Text className="text-base mb-4">{dropoffAddress}</Text>
 
       <Text className="text-base mb-2">{distance}</Text>
-      <Text className="text-base mb-4">Fare: ${rate}</Text>
+      <Text className="text-base mb-4">Fare: {rate} kr</Text>
 
       <TouchableOpacity className="bg-orange-500 p-4 rounded-full" onPress={onRequestConfirm}>
-        <Text className="text-white text-center text-lg font-bold">Request Ride</Text>
+        <Text className="text-white text-center text-lg font-bold">Confirm</Text>
       </TouchableOpacity>
     </View>
   );
