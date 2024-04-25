@@ -1,20 +1,20 @@
 import React, { forwardRef, useMemo, useState } from 'react';
 import { View, TextInput, Button, FlatList, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { GEOCODING_API_KEY } from '@env'; // Ensure this is set up in your .env file
+import { GEOCODING_API_KEY } from '@env'; 
 
 const BottomSheetComponent = forwardRef(({ onAddressChange, onRequestRide }, ref) => {
-  const snapPoints = useMemo(() => ['1%','25%', '70%'], []);
+  const snapPoints = useMemo(() => ['10%','30%', '70%'], []);
   const [pickupPredictions, setPickupPredictions] = useState([]);
   const [dropoffPredictions, setDropoffPredictions] = useState([]);
   const [pickUpValue, setPickUpValue] = useState('');
   const [dropOffValue, setDropOffValue] = useState('');
 
-  // Function to handle search queries for both pick up and drop off locations
+  
   const fetchPlaces = async (text, setLocationPredictions) => {
     if (text.length > 0) {
       try {
-        // Add the components parameter to restrict results to Sweden
+       
         const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${GEOCODING_API_KEY}&input=${text}&language=en&components=country:SE`;
         const result = await fetch(apiUrl);
         const json = await result.json();
@@ -29,7 +29,7 @@ const BottomSheetComponent = forwardRef(({ onAddressChange, onRequestRide }, ref
   
   const additionalStyles = StyleSheet.create({
     input: {
-      // If you want to remove the underline on Android, add this property
+      
       underlineColorAndroid: 'transparent',
     },
   });

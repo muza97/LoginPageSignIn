@@ -8,26 +8,27 @@ import { themeColors } from '../theme';
 import { requestRide } from '../components/rideRequest';
 import * as Location from 'expo-location';
 import BottomSheetComponent from '../components/BottomSheetComponent';
-import RideSummaryBox from '../components/RideSummaryBox'; // Import the component
+import RideSummaryBox from '../components/RideSummaryBox'; 
 import useGeocoding from '../hooks/useGeocoding';
-import { GEOCODING_API_KEY } from '@env'; // Ensure this is set up in your .env file
-import polyline from '@mapbox/polyline'; // Make sure to install the @mapbox/polyline package
- 
+import { GEOCODING_API_KEY } from '@env';
+import polyline from '@mapbox/polyline'; 
+import LoadingBar from '../components/LoadingBar';
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState(null);
   const [isLocationArrowPressed, setIsLocationArrowPressed] = useState(false);
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false); // State to track bottom sheet open status
-  const [rideRequested, setRideRequested] = useState(false); // State to track if ride is requested
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(true); 
+  const [rideRequested, setRideRequested] = useState(false); 
   const bottomSheetRef = useRef(null);
   const [showSummaryBox, setShowSummaryBox] = useState(false);
-  const [pickupAddress, setPickupAddress] = useState(''); // Add state for pickup address
-  const [dropoffAddress, setDropoffAddress] = useState(''); // Add state for dropoff address
+  const [pickupAddress, setPickupAddress] = useState(''); 
+  const [dropoffAddress, setDropoffAddress] = useState(''); 
   const [distance, setDistance] = useState(0);
 const [duration, setDuration] = useState(0);
   const { geocodeAddress, startCoordinates, destinationCoordinates, error } = useGeocoding();
   const [route, setRoute] = useState(null);
   const mapRef = useRef(null);
+
 
   const getDirections = async (startLoc, destinationLoc) => {
     try {
@@ -45,8 +46,8 @@ const [duration, setDuration] = useState(0);
         }));
   
         setRoute(coordinates);
-        setDistance(leg.distance.value); // Distance in meters
-        setDuration(leg.duration.value); // Duration in seconds
+        setDistance(leg.distance.value); 
+        setDuration(leg.duration.value);
       }
     } catch (error) {
       console.error(error);
@@ -71,11 +72,14 @@ const [duration, setDuration] = useState(0);
   }, [isBottomSheetOpen]);
 
   const handleRequestRide = useCallback(async () => {
-    // Check if coordinates are available
     if (!startCoordinates || !destinationCoordinates) {
       console.error("Coordinates not set");
       return;
     }
+  
+    // Close the bottom sheet and start the loading process
+    setIsBottomSheetOpen(false);
+    setRideRequested(true);
   
     // Destructure the coordinates for clarity
     const { latitude: pickupLatitude, longitude: pickupLongitude } = startCoordinates;
@@ -83,18 +87,22 @@ const [duration, setDuration] = useState(0);
   
     try {
       const rideResponse = await requestRide(pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude);
-      
       if (rideResponse) {
         console.log("Ride request successful:", rideResponse);
-        setRideRequested(true);
-        setShowSummaryBox(true);
-        bottomSheetRef.current?.snapToIndex(0);
+        // Wait for the loading bar to finish animating before showing the summary
+        setTimeout(() => {
+          setShowSummaryBox(true);
+          setRideRequested(false); // Hide loading bar after a set timeout (e.g., after 10 seconds)
+        }, 10000); // Adjust time as necessary to match the animation
+      } else {
+        console.error("No ride response received.");
+        setRideRequested(false); // Hide loading bar if no response received
       }
     } catch (error) {
       console.error("Failed to request ride:", error);
+      setRideRequested(false); // Hide loading bar on error
     }
   }, [startCoordinates, destinationCoordinates]);
-  
 
   useEffect(() => {
     (async () => {
@@ -218,24 +226,39 @@ const [duration, setDuration] = useState(0);
       >
         <MaterialIcons name="travel-explore" size={30} color="black" />
       </TouchableOpacity>
+      {isBottomSheetOpen && (
       <BottomSheetComponent
         ref={bottomSheetRef}
         onAddressChange={onAddressChange}
         onRequestRide={handleRequestRide}
       />
-  
-  {showSummaryBox && (
-  <RideSummaryBox
-    pickupAddress={pickupAddress}
-    dropoffAddress={dropoffAddress}
-    distance={`${(distance / 1000).toFixed(2)} km`}
-    duration={`${(duration / 60).toFixed(2)} minutes`}
-    rate={`kr${calculateFare(distance, duration)}`}
-    onRequestConfirm={() => {
-      console.log('Ride confirmed');
-      setShowSummaryBox(false);
-    }}
-        />
-      )}
-    </View>
-  );}
+    )}
+    
+    {/* Animated loading bar that appears when requesting a ride */}
+    {rideRequested && !showSummaryBox && (
+      <LoadingBar
+        onRequestCancel={() => {
+          console.log("Canceling request, reopening bottom sheet.");
+          setRideRequested(false);
+          setIsBottomSheetOpen(true);
+        }}
+      />
+    )}
+
+    {/* Ride summary box that appears after loading is complete */}
+    {showSummaryBox && (
+      <RideSummaryBox
+        pickupAddress={pickupAddress}
+        dropoffAddress={dropoffAddress}
+        distance={`${(distance / 1000).toFixed(2)} km`}
+        duration={`${(duration / 60).toFixed(2)} minutes`}
+        rate={`kr${calculateFare(distance, duration)}`}
+        onRequestConfirm={() => {
+          console.log('Ride confirmed');
+          setShowSummaryBox(false);
+          setIsBottomSheetOpen(true);  // Optionally re-open the bottom sheet or navigate away
+        }}
+      />
+    )}
+  </View>
+);}
