@@ -5,6 +5,7 @@ import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { themeColors } from '../theme';
+import { requestRide } from '../components/rideRequest';
 import * as Location from 'expo-location';
 import BottomSheetComponent from '../components/BottomSheetComponent';
 import RideSummaryBox from '../components/RideSummaryBox'; // Import the component
@@ -22,6 +23,8 @@ export default function HomeScreen() {
   const [showSummaryBox, setShowSummaryBox] = useState(false);
   const [pickupAddress, setPickupAddress] = useState(''); // Add state for pickup address
   const [dropoffAddress, setDropoffAddress] = useState(''); // Add state for dropoff address
+  const [distance, setDistance] = useState(0);
+const [duration, setDuration] = useState(0);
   const { geocodeAddress, startCoordinates, destinationCoordinates, error } = useGeocoding();
   const [route, setRoute] = useState(null);
   const mapRef = useRef(null);
@@ -32,15 +35,34 @@ export default function HomeScreen() {
         `https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc.latitude},${startLoc.longitude}&destination=${destinationLoc.latitude},${destinationLoc.longitude}&key=${GEOCODING_API_KEY}`
       );
       const json = await response.json();
-      const points = polyline.decode(json.routes[0].overview_polyline.points);
-      const coordinates = points.map(point => ({
-        latitude: point[0],
-        longitude: point[1],
-      }));
-      setRoute(coordinates);
+      if (json.routes.length > 0) {
+        const route = json.routes[0];
+        const leg = route.legs[0];
+        const points = polyline.decode(route.overview_polyline.points);
+        const coordinates = points.map(point => ({
+          latitude: point[0],
+          longitude: point[1],
+        }));
+  
+        setRoute(coordinates);
+        setDistance(leg.distance.value); // Distance in meters
+        setDuration(leg.duration.value); // Duration in seconds
+      }
     } catch (error) {
       console.error(error);
     }
+  };
+  
+  const calculateFare = (distance, duration) => {
+    const baseFare = 2.50; // Base fare in dollars
+    const perKm = 1.25; // Cost per kilometer
+    const perMinute = 0.20; // Cost per minute
+  
+    const distanceInKm = distance / 1000; // Convert meters to kilometers
+    const durationInMinutes = duration / 60; // Convert seconds to minutes
+  
+    const fare = baseFare + (distanceInKm * perKm) + (durationInMinutes * perMinute);
+    return fare.toFixed(2); // Format to 2 decimal places
   };
   
   const handleFocus = useCallback(() => {
@@ -48,13 +70,31 @@ export default function HomeScreen() {
     bottomSheetRef.current?.snapToIndex(isBottomSheetOpen ? 0 : 1); // Toggle between 10% and 70%
   }, [isBottomSheetOpen]);
 
-  const handleRequestRide = useCallback(() => {
-    // Update the ride request status and show the summary box
-    setRideRequested(true);
-    setShowSummaryBox(true);
-    // If you need to close the bottom sheet, you can do it here
-    bottomSheetRef.current?.snapToIndex(0);
-  }, []);
+  const handleRequestRide = useCallback(async () => {
+    // Check if coordinates are available
+    if (!startCoordinates || !destinationCoordinates) {
+      console.error("Coordinates not set");
+      return;
+    }
+  
+    // Destructure the coordinates for clarity
+    const { latitude: pickupLatitude, longitude: pickupLongitude } = startCoordinates;
+    const { latitude: dropoffLatitude, longitude: dropoffLongitude } = destinationCoordinates;
+  
+    try {
+      const rideResponse = await requestRide(pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude);
+      
+      if (rideResponse) {
+        console.log("Ride request successful:", rideResponse);
+        setRideRequested(true);
+        setShowSummaryBox(true);
+        bottomSheetRef.current?.snapToIndex(0);
+      }
+    } catch (error) {
+      console.error("Failed to request ride:", error);
+    }
+  }, [startCoordinates, destinationCoordinates]);
+  
 
   useEffect(() => {
     (async () => {
@@ -184,16 +224,17 @@ export default function HomeScreen() {
         onRequestRide={handleRequestRide}
       />
   
-      {showSummaryBox && (
-        <RideSummaryBox
-          pickupAddress={pickupAddress}
-          dropoffAddress={dropoffAddress}
-          distance="2.5 miles"
-          rate="5"
-          onRequestConfirm={() => {
-            console.log('Ride confirmed');
-            setShowSummaryBox(false);
-          }}
+  {showSummaryBox && (
+  <RideSummaryBox
+    pickupAddress={pickupAddress}
+    dropoffAddress={dropoffAddress}
+    distance={`${(distance / 1000).toFixed(2)} km`}
+    duration={`${(duration / 60).toFixed(2)} minutes`}
+    rate={`kr${calculateFare(distance, duration)}`}
+    onRequestConfirm={() => {
+      console.log('Ride confirmed');
+      setShowSummaryBox(false);
+    }}
         />
       )}
     </View>

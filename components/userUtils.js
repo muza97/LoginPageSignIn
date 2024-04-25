@@ -13,12 +13,12 @@ export const fetchUserDetails = async () => {
 
     const response = await axios.get(apiUrl +  '/user/details', {
       headers: {
-        'Authorization': `Bearer ${token}`, // Corrected template literal syntax
+        'Authorization': `Bearer ${token}`, 
       },
     });
 
     return {
-      name: response.data.username, // Adjust if the response structure is different
+      name: response.data.username, 
       email: response.data.email,
       phoneNumber: response.data.phoneNumber,
     };
