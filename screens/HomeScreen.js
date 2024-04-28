@@ -13,6 +13,8 @@ import useGeocoding from '../hooks/useGeocoding';
 import { GEOCODING_API_KEY } from '@env';
 import polyline from '@mapbox/polyline'; 
 import LoadingBar from '../components/LoadingBar';
+import BottomSheetRideOptions from '../components/BottomSheetRideOptions';
+
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState(null);
@@ -24,11 +26,16 @@ export default function HomeScreen() {
   const [pickupAddress, setPickupAddress] = useState(''); 
   const [dropoffAddress, setDropoffAddress] = useState(''); 
   const [distance, setDistance] = useState(0);
-const [duration, setDuration] = useState(0);
+  const [duration, setDuration] = useState(0);
   const { geocodeAddress, startCoordinates, destinationCoordinates, error } = useGeocoding();
   const [route, setRoute] = useState(null);
   const mapRef = useRef(null);
-
+  const [showRideOptions, setShowRideOptions] = useState(false);
+  const rideOptionsRef = useRef(null);
+  const rideOptions = [
+    { carModel: 'Tesla Model 3', arrivalTime: '5 mins', price: '50 kr' },
+    { carModel: 'Volvo XC90', arrivalTime: '8 mins', price: '45 kr' }
+  ];
 
   const getDirections = async (startLoc, destinationLoc) => {
     try {
@@ -154,11 +161,16 @@ const [duration, setDuration] = useState(0);
     }
   }, [route]);
 
+  const handleRideConfirm = () => {
+    setShowRideOptions(true);
+    rideOptionsRef.current?.snapToIndex(0);
+  };
+
 
   return (
     <View className="flex-1 justify-center items-center bg-[color:themeColors.bgColor(1)]">
       <MapView
-      ref={mapRef}
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         className="absolute top-0 left-0 right-0 bottom-0"
         initialRegion={userLocation || {
@@ -197,14 +209,14 @@ const [duration, setDuration] = useState(0);
   
         {/* Polyline between pickup and dropoff */}
         {startCoordinates && destinationCoordinates && (
-           <Polyline
-      coordinates={route}
-      strokeColor="#000" // black or any color you prefer
-      strokeWidth={6}
-    />
-  )}
+          <Polyline
+            coordinates={route}
+            strokeColor="#000" // black or any color you prefer
+            strokeWidth={6}
+          />
+        )}
       </MapView>
-      
+  
       <TouchableOpacity
         onPress={() => navigation.toggleDrawer()}
         className="absolute top-10 left-4 z-10"
@@ -226,39 +238,54 @@ const [duration, setDuration] = useState(0);
       >
         <MaterialIcons name="travel-explore" size={30} color="black" />
       </TouchableOpacity>
+  
       {isBottomSheetOpen && (
-      <BottomSheetComponent
-        ref={bottomSheetRef}
-        onAddressChange={onAddressChange}
-        onRequestRide={handleRequestRide}
-      />
-    )}
-    
-    {/* Animated loading bar that appears when requesting a ride */}
-    {rideRequested && !showSummaryBox && (
-      <LoadingBar
-        onRequestCancel={() => {
-          console.log("Canceling request, reopening bottom sheet.");
-          setRideRequested(false);
-          setIsBottomSheetOpen(true);
-        }}
-      />
-    )}
-
-    {/* Ride summary box that appears after loading is complete */}
-    {showSummaryBox && (
-      <RideSummaryBox
-        pickupAddress={pickupAddress}
-        dropoffAddress={dropoffAddress}
-        distance={`${(distance / 1000).toFixed(2)} km`}
-        duration={`${(duration / 60).toFixed(2)} minutes`}
-        rate={`${calculateFare(distance, duration)}`}
-        onRequestConfirm={() => {
-          console.log('Ride confirmed');
-          setShowSummaryBox(false);
-          setIsBottomSheetOpen(true);  // Optionally re-open the bottom sheet or navigate away
-        }}
-      />
-    )}
-  </View>
-);}
+        <BottomSheetComponent
+          ref={bottomSheetRef}
+          onAddressChange={onAddressChange}
+          onRequestRide={handleRequestRide}
+        />
+      )}
+  
+      {/* Animated loading bar that appears when requesting a ride */}
+      {rideRequested && !showSummaryBox && (
+        <LoadingBar
+          onRequestCancel={() => {
+            console.log("Canceling request, reopening bottom sheet.");
+            setRideRequested(false);
+            setIsBottomSheetOpen(true);
+          }}
+        />
+      )}
+  
+      {/* Ride summary box that appears after loading is complete */}
+      {showSummaryBox && (
+        <RideSummaryBox
+          pickupAddress={pickupAddress}
+          dropoffAddress={dropoffAddress}
+          distance={`${(distance / 1000).toFixed(2)} km`}
+          duration={`${(duration / 60).toFixed(2)} minutes`}
+          rate={`${calculateFare(distance, duration)}`}
+          onRequestConfirm={() => {
+            console.log('Ride confirmed');
+            setShowSummaryBox(false);
+            setIsBottomSheetOpen(false);
+            setShowRideOptions(true);
+          }}
+        />
+      )}
+  
+      {/* Ride options bottom sheet */}
+      {showRideOptions && (
+        <BottomSheetRideOptions
+          ref={rideOptionsRef}
+          rideOptions={rideOptions}
+          onRideSelect={(selectedRide) => {
+            console.log('Selected ride:', selectedRide);
+            setShowRideOptions(false); // Close the bottom sheet after selection
+          }}
+        />
+      )}
+    </View>
+  );
+}
