@@ -115,11 +115,11 @@ const BottomSheetComponent = forwardRef(({ onAddressChange, onRequestRide }, ref
            <Text className="text-xs mt-1">Home</Text>
          </TouchableOpacity>
          <TouchableOpacity onPress={() => handleQuickAddressSet('work')} className="items-center">
-           <Icon name="briefcase" size={24} color="black" />
+           <Icon name="briefcase" size={20} color="black" />
            <Text className="text-xs mt-1">Work</Text>
          </TouchableOpacity>
          <TouchableOpacity onPress={toggleFemaleDriverFilter} className="items-center">
-           <Icon name="female" size={24} color={femaleDriverOnly ? "blue" : "black"} />
+           <Icon name="female" size={20} color={femaleDriverOnly ? "blue" : "black"} />
            <Text className="text-xs mt-1">{femaleDriverOnly ? "Female Only" : "Any Driver"}</Text>
          </TouchableOpacity>
        </View>
