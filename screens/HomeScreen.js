@@ -14,7 +14,7 @@ import { GEOCODING_API_KEY } from '@env';
 import polyline from '@mapbox/polyline'; 
 import LoadingBar from '../components/LoadingBar';
 import BottomSheetRideOptions from '../components/BottomSheetRideOptions';
-
+import MapViewComponent from '../components/MapViewComponent';
 export default function HomeScreen() {
   const navigation = useNavigation();
   const [userLocation, setUserLocation] = useState(null);
@@ -87,8 +87,7 @@ export default function HomeScreen() {
     // Close the bottom sheet and start the loading process
     setIsBottomSheetOpen(false);
     setRideRequested(true);
-  
-    // Destructure the coordinates for clarity
+
     const { latitude: pickupLatitude, longitude: pickupLongitude } = startCoordinates;
     const { latitude: dropoffLatitude, longitude: dropoffLongitude } = destinationCoordinates;
   
@@ -96,18 +95,17 @@ export default function HomeScreen() {
       const rideResponse = await requestRide(pickupLatitude, pickupLongitude, dropoffLatitude, dropoffLongitude);
       if (rideResponse) {
         console.log("Ride request successful:", rideResponse);
-        // Wait for the loading bar to finish animating before showing the summary
         setTimeout(() => {
           setShowSummaryBox(true);
-          setRideRequested(false); // Hide loading bar after a set timeout (e.g., after 10 seconds)
-        }, 10000); // Adjust time as necessary to match the animation
+          setRideRequested(false); 
+        }, 10000); 
       } else {
         console.error("No ride response received.");
-        setRideRequested(false); // Hide loading bar if no response received
+        setRideRequested(false); 
       }
     } catch (error) {
       console.error("Failed to request ride:", error);
-      setRideRequested(false); // Hide loading bar on error
+      setRideRequested(false); 
     }
   }, [startCoordinates, destinationCoordinates]);
 
@@ -145,14 +143,12 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
-    // Whenever both start and destination coordinates are set, adjust the map view
     if (startCoordinates && destinationCoordinates) {
       getDirections(startCoordinates, destinationCoordinates);
     }
   }, [startCoordinates, destinationCoordinates]);
 
   useEffect(() => {
-    // Whenever the route is updated, fit the map to the polyline
     if (route && mapRef.current) {
       mapRef.current.fitToCoordinates(route, {
         edgePadding: { top: 100, right: 50, bottom: 50, left: 50 },
@@ -169,54 +165,21 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 justify-center items-center bg-[color:themeColors.bgColor(1)]">
-      <MapView
-        ref={mapRef}
-        provider={PROVIDER_GOOGLE}
-        className="absolute top-0 left-0 right-0 bottom-0"
-        initialRegion={userLocation || {
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        region={userLocation}
-      >
-        {/* Show user location marker */}
-        {userLocation && (
-          <Marker
-            coordinate={userLocation}
-            title="Your Location"
-          />
-        )}
-  
-        {/* Show pickup location marker */}
-        {startCoordinates && (
-          <Marker
-            coordinate={startCoordinates}
-            title="Pick Up"
-            pinColor="green"
-          />
-        )}
-  
-        {/* Show dropoff location marker */}
-        {destinationCoordinates && (
-          <Marker
-            coordinate={destinationCoordinates}
-            title="Drop Off"
-            pinColor="blue"
-          />
-        )}
-  
-        {/* Polyline between pickup and dropoff */}
-        {startCoordinates && destinationCoordinates && (
-          <Polyline
-            coordinates={route}
-            strokeColor="#000" // black or any color you prefer
-            strokeWidth={6}
-          />
-        )}
-      </MapView>
-  
+
+
+
+<MapViewComponent
+        userLocation={userLocation}
+        startCoordinates={startCoordinates}
+        destinationCoordinates={destinationCoordinates}
+        route={route}
+        mapRef={mapRef}
+        navigation={navigation}
+        isLocationArrowPressed={isLocationArrowPressed}
+        getCurrentLocation={getCurrentLocation}
+        setIsLocationArrowPressed={setIsLocationArrowPressed}
+        handleFocus={handleFocus}
+      /> 
       <TouchableOpacity
         onPress={() => navigation.toggleDrawer()}
         className="absolute top-10 left-4 z-10"

@@ -38,6 +38,8 @@ const BottomSheetComponent = forwardRef(({ onAddressChange, onRequestRide }, ref
       underlineColorAndroid: 'transparent',
     },
   });
+
+  
 //   return (
 //     <BottomSheet ref={ref} index={0} snapPoints={snapPoints} enablePanDownToClose={true}>
 //       <View className="flex-1 items-center p-4 bg-white rounded-t-xl">

@@ -5,9 +5,10 @@ import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawe
 import LogoutButton from '../buttons/LogoutButton';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchUserDetails } from './userUtils';
+
 
 // Define fetchProfileImage function
+/*
 export const fetchProfileImage = async () => {
   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
   console.log(apiUrl);
@@ -34,10 +35,10 @@ export const fetchProfileImage = async () => {
     }
   } catch (error) {
     console.error('Error fetching profile image:', error);
-    return null; // Return null on error
+    return null; 
   }
 };
-
+*/
 const CustomDrawerContent = (props) => {
   const navigation = useNavigation();
   const [profileImageUrl, setProfileImageUrl] = useState('../assets/image/signup.png'); 
